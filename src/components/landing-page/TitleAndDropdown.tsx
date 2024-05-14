@@ -6,14 +6,13 @@ import {
   MAX_NUMBER_OF_SELECTED_DOCUMENTS,
   useDocumentSelector,
 } from "~/hooks/useDocumentSelector";
-import { backendClient } from "~/api/backend";
-import { AiOutlineArrowRight, AiTwotoneCalendar } from "react-icons/ai";
+import { AiOutlineArrowRight} from "react-icons/ai";
 import { useIntercom } from "react-use-intercom";
 import { LoadingSpinner } from "~/components/basics/Loading";
 import useIsMobile from "~/hooks/utils/useIsMobile";
 import { CloudUpload,Trash2 } from "lucide-react";
 import { useFileStore } from "~/utils/fileStore";
-import { execFile } from "child_process";
+
 
 interface FormState {
   excelFiles: File[];
@@ -21,32 +20,26 @@ interface FormState {
 
 export const TitleAndDropdown = () => {
   const router = useRouter();
-
   const { isMobile } = useIsMobile();
 
-  const [isLoadingConversation, setIsLoadingConversation] = useState(false);
   const files=useFileStore((state)=>state.files)
   const addFiles=useFileStore((state)=>state.addFiles)
+
+  const [fileAvailable,setFileAvailable]=useState(false);
+  const [isLoadingConversation, setIsLoadingConversation] = useState(false);
+
   const handleSubmit = (event: { preventDefault: () => void }) => {
     setIsLoadingConversation(true);
     event.preventDefault();
-    const selectedDocumentIds = selectedDocuments.map((val) => val.id);
-    backendClient
-      .createConversation(selectedDocumentIds)
-      .then((newConversationId) => {
-        setIsLoadingConversation(false);
-        router
-          .push(`/conversation/${newConversationId}`)
-          .catch(() => console.log("error navigating to conversation"));
-      })
-      .catch(() => console.log("error creating conversation "));
+    setTimeout(()=>{
+      router.push(`/documents/scdkcidhc`)
+    },5000)
   };
 
   const {
     selectedDocuments,
     isDocumentSelectionEnabled,
     isStartConversationButtonEnabled,
-    sortedSelectedDocuments,
   } = useDocumentSelector();
 
   const { boot } = useIntercom();
@@ -100,19 +93,16 @@ export const TitleAndDropdown = () => {
 
 
   const renderFiles = () => {
-    const selectedFile=useFileStore((state)=>state.selectedFiles);
-    const selectFiles=useFileStore((state)=>state.selectFiles);
-    const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+    const selectedFiles=useFileStore((state)=>state.selectedFiles);
+    const selectFiles=useFileStore((state)=>state.selectFile);
+    const deleteFile=useFileStore((state)=>state.deleteFile)
 
-    const toggleSelectFile = (fileName: string) => {
-      setSelectedFiles((prevSelectedFiles) => {
-        if (prevSelectedFiles.includes(fileName)) {
-          return prevSelectedFiles.filter((file) => file !== fileName);
-        } else {
-          return [...prevSelectedFiles, fileName];
-        }
-      });
+    const toggleSelectFile = (file: File) => {
+      selectFiles(file);
+      setFileAvailable(true);
     };
+    console.log("selectedFiles",selectedFiles);
+    
   
     return (
       <table className=" m-5">
@@ -130,15 +120,15 @@ export const TitleAndDropdown = () => {
             <td className="w-[100px] flex">
               <input
                 type="checkbox"
-                checked={selectedFiles.includes(file.name)}
-                onChange={() => toggleSelectFile(file.name)}
+                checked={selectedFiles.includes(file)}
+                onChange={() => toggleSelectFile(file)}
                 className="mx-auto w-fit"
               />
             </td>
             <td className="w-[300px] overflow-auto">{file.name}</td>
             <td className="min-w-[200px] text-center">{file.type}</td>
             <td className="w-[100px] text-center">
-              <Trash2  className="mx-auto" strokeWidth={1.25} />
+              <Trash2 onClick={()=>deleteFile(index)}  className="mx-auto" strokeWidth={1.25} />
             </td>
           </tr>
         ))}
@@ -165,7 +155,7 @@ export const TitleAndDropdown = () => {
           </div>
           {renderFiles()}
 
-          <div className="mt-2 flex h-full w-11/12 flex-col justify-start overflow-scroll px-4 ">
+          <div className="mt-2 flex h-[200px] w-11/12 flex-col justify-start overflow-scroll px-4 ">
             {selectedDocuments.length === 0 && (
               <div
                 className="m-4 flex h-full flex-col items-center justify-center rounded-xl  border border-dashed bg-gray-00 font-nunito text-gray-90"
@@ -210,11 +200,11 @@ export const TitleAndDropdown = () => {
               )}
               <div className="md:ml-12">
                 <button
-                  disabled={!isStartConversationButtonEnabled}
+                  disabled={!fileAvailable}
                   onClick={handleSubmit}
                   className={cx(
                     "m-4 rounded border bg-llama-indigo px-6 py-2 font-nunito text-white hover:bg-[#3B3775] disabled:bg-gray-30 ",
-                    !isStartConversationButtonEnabled &&
+                    !fileAvailable &&
                       "border-gray-300 bg-gray-300"
                   )}
                 >

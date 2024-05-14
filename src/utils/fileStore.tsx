@@ -3,7 +3,7 @@ import { create } from "zustand";
 interface FileState {
   files: File[];
   selectedFiles: File[];
-  selectFiles: (files: File[]) => void;
+  selectFile: (file: File) => void;
   addFiles: (file: File[]) => void;
   deleteFile: (index: number) => void;
 }
@@ -11,7 +11,7 @@ interface FileState {
 export const useFileStore = create<FileState>((set) => ({
   files: [],
   selectedFiles: [],
-  selectFiles: (files) => set((state) => ({ selectedFiles:[...files] })),
+  selectFile: (file) => set((state) => ({ selectedFiles: [...state.selectedFiles,file] })), 
   addFiles: (newFiles) => set((state) => ({ files: [...state.files, ...newFiles] })),
   deleteFile: (index) =>
     set((state) => ({
