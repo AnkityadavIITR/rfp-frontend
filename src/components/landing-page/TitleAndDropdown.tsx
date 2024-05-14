@@ -8,7 +8,6 @@ import {
 } from "~/hooks/useDocumentSelector";
 import { AiOutlineArrowRight} from "react-icons/ai";
 import { useIntercom } from "react-use-intercom";
-import { LoadingSpinner } from "~/components/basics/Loading";
 import useIsMobile from "~/hooks/utils/useIsMobile";
 import { CloudUpload,Trash2 } from "lucide-react";
 import { useFileStore } from "~/utils/fileStore";
@@ -33,7 +32,7 @@ export const TitleAndDropdown = () => {
     event.preventDefault();
     setTimeout(()=>{
       router.push(`/documents/scdkcidhc`)
-    },5000)
+    },2500)
   };
 
   const {
@@ -211,7 +210,7 @@ export const TitleAndDropdown = () => {
                   <div className="flex items-center justify-center">
                     {isLoadingConversation ? (
                       <div className="flex h-[22px] w-[180px] items-center justify-center">
-                        <LoadingSpinner />
+                        <div className="loader h-3 w-3 rounded-full border-2 border-gray-200 ease-linear"></div>
                       </div>
                     ) : (
                       <>

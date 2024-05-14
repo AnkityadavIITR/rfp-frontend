@@ -41,8 +41,6 @@ export const DisplayMultiplePdfs: React.FC<DisplayMultiplePdfsProps> = ({
               >
                 <div
                   className={`flex flex-col items-start justify-start ${
-                    borderColors[file.color]
-                  } ${
                     !isActivePdf(file)
                       ? "group-hover:border-l-4 group-hover:pl-1 group-hover:font-bold group-hover:text-gray-90"
                       : ""
@@ -50,7 +48,7 @@ export const DisplayMultiplePdfs: React.FC<DisplayMultiplePdfsProps> = ({
                 >
                   <div>{file.ticker}</div>
                   <div className="text-left">
-                    {file.year} {file.quarter && `Q${file.quarter}`}
+                    {file.year}
                   </div>
                 </div>
               </button>

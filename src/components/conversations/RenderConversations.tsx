@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { MESSAGE_STATUS, MessageSubProcess, ROLE } from "~/types/conversation";
 import type { Citation } from "~/types/conversation";
 import type { Message, SubQuestion } from "~/types/conversation";
-import { LoadingSpinner } from "~/components/basics/Loading";
 import { PiCaretDownBold } from "react-icons/pi";
 import { HiOutlineChatAlt2 } from "react-icons/hi";
 
@@ -56,9 +55,9 @@ interface SubProcessDisplayProps {
 }
 
 type SubQuestionItem = {
-  subQuestion: SubQuestion,
-  subProcessIndex: number,
-  subQuestionIndex: number
+  subQuestion: SubQuestion;
+  subProcessIndex: number;
+  subQuestionIndex: number;
 };
 
 const SubProcessDisplay: React.FC<SubProcessDisplayProps> = ({
@@ -108,12 +107,10 @@ const SubProcessDisplay: React.FC<SubProcessDisplayProps> = ({
           <div className="ml-4 border-l border-l-gray-30 pb-1 pl-4 font-nunito text-[11px] font-light text-gray-60">
             <div>Question Received</div>
             {subQuestions.length > 0 && (
-                <div
-                  key={`${messageId}-sub-process`}
-                  className="text-gray-60"
-                >
-                  <div>
-                    {subQuestions.map(({subQuestion, subQuestionIndex, subProcessIndex}) => {
+              <div key={`${messageId}-sub-process`} className="text-gray-60">
+                <div>
+                  {subQuestions.map(
+                    ({ subQuestion, subQuestionIndex, subProcessIndex }) => {
                       const hasCitations = !!subQuestion.citations;
                       return (
                         <div
@@ -139,10 +136,9 @@ const SubProcessDisplay: React.FC<SubProcessDisplayProps> = ({
                                     if (!citationDocument) {
                                       return;
                                     }
-                                    const yearDisplay =
-                                      citationDocument.quarter
-                                        ? `${citationDocument.year} Q${citationDocument.quarter}`
-                                        : `${citationDocument.year}`;
+                                    const yearDisplay = citationDocument.quarter
+                                      ? `${citationDocument.year} Q${citationDocument.quarter}`
+                                      : `${citationDocument.year}`;
                                     return (
                                       <CitationDisplay
                                         key={`${messageId}-${subProcessIndex}-${subQuestionIndex}-${citationIndex}`}
@@ -165,15 +161,15 @@ const SubProcessDisplay: React.FC<SubProcessDisplayProps> = ({
                           </div>
                         </div>
                       );
-                    })}
-                  </div>
+                    }
+                  )}
                 </div>
-              )
-            }
+              </div>
+            )}
           </div>
           {showSpinner && (
             <div className="ml-2.5 mt-1 ">
-              <LoadingSpinner />
+              <div className="loader h-3 w-3 rounded-full border-2 border-gray-200 ease-linear"></div>
             </div>
           )}
           <div className="pb-2"></div>
@@ -182,7 +178,6 @@ const SubProcessDisplay: React.FC<SubProcessDisplayProps> = ({
     </div>
   );
 };
-
 
 interface UserDisplayProps {
   message: Message;
@@ -283,7 +278,7 @@ const AssistantDisplay: React.FC<AssistantDisplayProps> = ({
           <div className="flex ">
             <div className="w-1/5"></div>
             <div className="w-4/5">
-              <p className="relative mb-2 mt-2 pr-3 font-nunito whitespace-pre-wrap font-bold text-gray-90">
+              <p className="relative mb-2 mt-2 whitespace-pre-wrap pr-3 font-nunito font-bold text-gray-90">
                 {message.content}
               </p>
               <p className="flex items-center justify-start p-1 text-xs text-gray-60">
@@ -376,7 +371,9 @@ export const RenderConversations: React.FC<IRenderConversation> = ({
                 Which company had the highest revenue?
               </button>
               <button
-                onClick={() => setUserMessage("What are their main business focus areas?")}
+                onClick={() =>
+                  setUserMessage("What are their main business focus areas?")
+                }
                 className="m-1 flex-shrink rounded-full border border-gray-60 px-3 py-1 hover:bg-gray-15"
               >
                 What are their main business focus areas?

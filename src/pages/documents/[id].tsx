@@ -4,16 +4,11 @@ import { PdfFocusProvider } from "~/context/pdf";
 
 import type { ChangeEvent } from "react";
 import DisplayMultiplePdfs from "~/components/pdf-viewer/DisplayMultiplePdfs";
-import { backendUrl } from "src/config";
-import { MESSAGE_STATUS, Message } from "~/types/conversation";
 import useMessages from "~/hooks/useMessages";
 import { backendClient } from "~/api/backend";
 import { RenderConversations as RenderConversations } from "~/components/conversations/RenderConversations";
 import { BiArrowBack } from "react-icons/bi";
 import { SecDocument } from "~/types/document";
-import { FiShare } from "react-icons/fi";
-// import ShareLinkModal from "~/components/modals/ShareLinkModal";
-import { BsArrowUpCircle } from "react-icons/bs";
 import { useModal } from "~/hooks/utils/useModal";
 import { useIntercom } from "react-use-intercom";
 import useIsMobile from "~/hooks/utils/useIsMobile";
@@ -65,62 +60,22 @@ export default function Conversation() {
     }
   }, [conversationId, setMessages]);
 
-  // Keeping this in this file for now because this will be subject to change
-  const submit = () => {
-    if (!userMessage || !conversationId) {
-      return;
-    }
-
-    setIsMessagePending(true);
-    userSendMessage(userMessage);
-    setUserMessage("");
-
-    const messageEndpoint =
-      backendUrl + `api/conversation/${conversationId}/message`;
-    const url = messageEndpoint + `?user_message=${encodeURI(userMessage)}`;
-
-    const events = new EventSource(url);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
-    events.onmessage = (event: MessageEvent) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
-      const parsedData: Message = JSON.parse(event.data);
-      systemSendMessage(parsedData);
-
-      if (
-        parsedData.status === MESSAGE_STATUS.SUCCESS ||
-        parsedData.status === MESSAGE_STATUS.ERROR
-      ) {
-        events.close();
-        setIsMessagePending(false);
-      }
-    };
-  };
-  const handleTextChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setUserMessage(event.target.value);
-  };
-  useEffect(() => {
-    const textarea = document.querySelector("textarea");
-    if (textarea) {
-      textarea.style.height = "auto";
-
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  }, [userMessage]);
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        if (!isMessagePending) {
-          submit();
-        }
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [submit]);
+const pdfData=[
+  {
+    ticker:"sacadc",
+    fullName:"ankit",
+    id:"kcsdc",
+    url:"https://d687lz8k56fia.cloudfront.net/sec-edgar-filings/0000320193/10-K/0000320193-23-000106/primary-document.pdf",
+    year:"2012",
+  },  
+  {
+    ticker:"dscnjsbdv",
+    fullName:"ankit-2",
+    id:"sdcuydvdv",
+    url:"https://d687lz8k56fia.cloudfront.net/sec-edgar-filings/0000200406/10-Q/0000200406-23-000082/filing-details.pdf",
+    year:"2012",
+  },  
+]
 
   const setSuggestedMessage = (text: string) => {
     setUserMessage(text);
@@ -129,11 +84,6 @@ export default function Conversation() {
     }
   };
 
-  useEffect(() => {
-    if (textFocusRef.current) {
-      textFocusRef.current.focus();
-    }
-  }, []);
 
   if (isMobile) {
     return (
@@ -160,7 +110,7 @@ export default function Conversation() {
 
   return (
     <PdfFocusProvider>
-      <div className="flex h-[100vh] w-full items-center justify-center">
+      <div className="flex h-[100vh] w-full items-center">
         <div className="flex h-[100vh] w-[44vw] flex-col items-center border-r-2 bg-white">
           <div className="flex h-[44px] w-full items-center justify-between border-b-2 ">
             <div className="flex w-full items-center justify-between">
@@ -186,7 +136,7 @@ export default function Conversation() {
           </div>
         </div>
         <div className="h-[100vh] w-max">
-          <DisplayMultiplePdfs pdfs={selectedDocuments} />
+          <DisplayMultiplePdfs pdfs={pdfData} />
         </div>
       </div>
     </PdfFocusProvider>
