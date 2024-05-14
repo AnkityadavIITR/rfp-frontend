@@ -74,14 +74,12 @@ export const PDFOptionsBar: React.FC<PDFOptionsBarProps> = ({
     >
       <div className="ml-3 flex w-1/2 items-center justify-start ">
         <div
-          className={`flex items-center justify-center border-l-4 pl-2 ${
-            borderColors[file.color]
-          } `}
+          className={`flex items-center justify-center border-l-4 pl-2`}
         >
           <div className="text font-bold">{file.ticker}</div>
           <div className="ml-2">
             {" "}
-            {file.year} {file.quarter && `Q${file.quarter}`}
+            {file.year}
           </div>
         </div>
       </div>
@@ -123,7 +121,7 @@ export const PDFOptionsBar: React.FC<PDFOptionsBarProps> = ({
                 <HiMiniMagnifyingGlassMinus size={22} />
               </button>
               <div
-                className="w-[70px] cursor-pointer rounded px-1 px-2 hover:bg-gray-15 "
+                className="w-[70px] cursor-pointer rounded  px-2 hover:bg-gray-15 "
                 onClick={() => setZoomPopoverOpen(!zoomPopoverOpen)}
               >
                 <div className="flex items-center justify-center">
