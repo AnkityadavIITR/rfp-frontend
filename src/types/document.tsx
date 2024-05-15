@@ -1,4 +1,4 @@
-import { DocumentColorEnum } from "~/utils/colors";
+import type { DocumentColorEnum } from "~/utils/colors";
 
 export enum DocumentType {
   TenK = "Form 10K",

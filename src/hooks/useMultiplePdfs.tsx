@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { usePdfFocus } from "~/context/pdf";
-import { SecDocument } from "~/types/document";
+import type { SecDocument } from "~/types/document";
 
 export const useMultiplePdfs = (pdfs: SecDocument[]) => {
   const [activePdfUrl, setActivePdfUrl] = useState<string>("");

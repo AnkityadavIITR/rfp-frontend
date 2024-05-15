@@ -21,13 +21,16 @@ export const TitleAndDropdown = () => {
   const [fileAvailable, setFileAvailable] = useState(false);
   const [isLoadingConversation, setIsLoadingConversation] = useState(false);
 
-  const handleSubmit = (event: { preventDefault: () => void }) => {
+  const handleSubmit = (event: { preventDefault: () => void }): void => {
     setIsLoadingConversation(true);
     event.preventDefault();
-    router.push(`/documents/scdkcidhc`);
-    // setTimeout(() => {
-    // }, 2500);
+    
+    router.push(`/documents/scdkcidhc`)
+      .catch(error => {
+        console.error("Error while routing:", error);
+      });
   };
+  
 
 
 
