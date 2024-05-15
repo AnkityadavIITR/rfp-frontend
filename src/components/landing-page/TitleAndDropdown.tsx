@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import cx from "classnames";
 import { AiOutlineArrowRight } from "react-icons/ai";
-import { useIntercom } from "react-use-intercom";
+// import { useIntercom } from "react-use-intercom";
 import useIsMobile from "~/hooks/utils/useIsMobile";
 import { CloudUpload, Trash2 } from "lucide-react";
 import { useFileStore } from "~/utils/store/fileStore";
@@ -31,11 +31,11 @@ export const TitleAndDropdown = () => {
   };
 
 
-  const { boot } = useIntercom();
+  // const { boot } = useIntercom();
 
-  useEffect(() => {
-    boot();
-  }, []);
+  // useEffect(() => {
+  //   boot();
+  // }, []);
 
   const [formState, setFormState] = React.useState<FormState>({
     excelFiles: [],
@@ -104,16 +104,16 @@ export const TitleAndDropdown = () => {
       <table className=" m-5">
         <thead>
           <tr className="flex">
-            <th className="w-[100px]">Select</th>
-            <th className="w-[300px]">File Name</th>
-            <th className="min-w-[200px]">File Type</th>
-            <th className="w-[100px]">Delete</th>
+            <th className="w-[60px] xl:w-[100px]">Select</th>
+            <th className="w-[200px] xl:w-[300px]">File Name</th>
+            <th className="w-[150px] xl:w-[200px]">File Type</th>
+            <th className="w-[50px] xl:w-[100px]">Delete</th>
           </tr>
         </thead>
         <tbody>
           {files?.map((file, index) => (
             <tr key={index} className="flex items-center">
-              <td className="flex w-[100px]">
+              <td className="flex xl:w-[100px] w-[60px]">
                 <input
                   type="checkbox"
                   checked={selectedFiles.includes(file)}
@@ -121,9 +121,9 @@ export const TitleAndDropdown = () => {
                   className="mx-auto w-fit"
                 />
               </td>
-              <td className="w-[300px] overflow-auto">{file.name}</td>
-              <td className="min-w-[200px] text-center">{file.type}</td>
-              <td className="w-[100px] text-center">
+              <td className="w-[200px] xl:w-[300px] overflow-auto">{file.name}</td>
+              <td className=" w-[150px] xl:w-[200px] text-center">{file.type}</td>
+              <td className="w-[60px] xl:w-[100px] text-center">
                 <Trash2
                   onClick={() => deleteFile(index)}
                   className="mx-auto"
@@ -140,13 +140,6 @@ export const TitleAndDropdown = () => {
   return (
     <div className="landing-page-gradient-1 relative flex h-max w-screen flex-col items-center font-lora ">
       <div className="mt-28 flex flex-col items-center"></div>
-      {isMobile ? (
-        <div className="mt-12 flex h-1/5 w-11/12 rounded border p-4 text-center">
-          <div className="text-xl font-bold">
-            To start analyzing documents, please switch to a larger screen!
-          </div>
-        </div>
-      ) : (
         <div className="mt-5 flex h-min w-11/12 max-w-[1200px] flex-col items-center justify-center rounded-lg border-2 bg-white sm:min-h-[400px] md:w-9/12 ">
           <div className="p-4 text-center text-xl font-bold">
             Start your conversation by selecting the documents you want to
@@ -209,7 +202,6 @@ export const TitleAndDropdown = () => {
             </div>
           </div>
         </div>
-      )}
     </div>
   );
 };

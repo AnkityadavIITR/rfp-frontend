@@ -7,7 +7,7 @@ import DisplayMultiplePdfs from "~/components/pdf-viewer/DisplayMultiplePdfs";
 import { RenderConversations as RenderConversations } from "~/components/conversations/RenderConversations";
 import { BiArrowBack } from "react-icons/bi";
 import { SecDocument } from "~/types/document";
-import { useIntercom } from "react-use-intercom";
+// import { useIntercom } from "react-use-intercom";
 import useIsMobile from "~/hooks/utils/useIsMobile";
 import {
   Accordion,
@@ -20,10 +20,10 @@ export default function Conversation() {
   const router = useRouter();
   const { id } = router.query;
 
-  const { shutdown } = useIntercom();
-  useEffect(() => {
-    shutdown();
-  }, []);
+  // const { shutdown } = useIntercom();
+  // useEffect(() => {
+  //   shutdown();
+  // }, []);
 
   const { isMobile } = useIsMobile();
 
