@@ -5,7 +5,7 @@ import type { NextPage } from "next";
 import { TitleAndDropdown } from "~/components/landing-page/TitleAndDropdown";
 
 const LandingPage: NextPage = () => {
-  const { isMobile } = useIsMobile();
+  const { isMobile } = useIsMobile()
 
   return (
     <>
