@@ -1,13 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import { PdfFocusProvider } from "~/context/pdf";
+import { DocumentColorEnum } from "~/utils/colors";
 
-import type { ChangeEvent } from "react";
 import DisplayMultiplePdfs from "~/components/pdf-viewer/DisplayMultiplePdfs";
-import { RenderConversations as RenderConversations } from "~/components/conversations/RenderConversations";
 import { BiArrowBack } from "react-icons/bi";
-import { SecDocument } from "~/types/document";
-// import { useIntercom } from "react-use-intercom";
 import useIsMobile from "~/hooks/utils/useIsMobile";
 import {
   Accordion,
@@ -18,25 +15,10 @@ import {
 
 export default function Conversation() {
   const router = useRouter();
-  const { id } = router.query;
 
-  // const { shutdown } = useIntercom();
-  // useEffect(() => {
-  //   shutdown();
-  // }, []);
 
   const { isMobile } = useIsMobile();
 
-  const [conversationId, setConversationId] = useState<string | null>(null);
-  const [userMessage, setUserMessage] = useState("");
-
-  const textFocusRef = useRef<HTMLTextAreaElement | null>(null);
-
-  useEffect(() => {
-    if (id && typeof id === "string") {
-      setConversationId(id);
-    }
-  }, [id]);
 
   const pdfData = [
     {
@@ -46,6 +28,7 @@ export default function Conversation() {
       url: "https://d687lz8k56fia.cloudfront.net/sec-edgar-filings/0000320193/10-K/0000320193-23-000106/primary-document.pdf",
       year: "2012",
       quarter: "2",
+      color:DocumentColorEnum.purple
     },
     {
       ticker: "dscnjsbdv",
@@ -54,15 +37,10 @@ export default function Conversation() {
       url: "https://d687lz8k56fia.cloudfront.net/sec-edgar-filings/0000200406/10-Q/0000200406-23-000082/filing-details.pdf",
       year: "2012",
       quarter: "2",
+      color:DocumentColorEnum.purple
     },
   ];
 
-  const setSuggestedMessage = (text: string) => {
-    setUserMessage(text);
-    if (textFocusRef.current) {
-      textFocusRef.current.focus();
-    }
-  };
 
   if (isMobile) {
     return (

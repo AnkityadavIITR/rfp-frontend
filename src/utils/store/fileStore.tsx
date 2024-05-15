@@ -4,7 +4,7 @@ interface FileState {
   files: File[];
   selectedFiles: File[];
   selectFile: (file: File) => void;
-  removeSelectedFile:(name:String)=>void;
+  removeSelectedFile:(name:string)=>void;
   addFiles: (file: File[]) => void;
   deleteFile: (index: number) => void;
 }

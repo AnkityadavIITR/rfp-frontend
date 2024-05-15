@@ -1,23 +1,22 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import cx from "classnames";
 import { AiOutlineArrowRight } from "react-icons/ai";
-// import { useIntercom } from "react-use-intercom";
-import useIsMobile from "~/hooks/utils/useIsMobile";
 import { CloudUpload, Trash2 } from "lucide-react";
 import { useFileStore } from "~/utils/store/fileStore";
 
-interface FormState {
-  excelFiles: File[];
-}
+
 
 export const TitleAndDropdown = () => {
   const router = useRouter();
-  const { isMobile } = useIsMobile();
 
   const files = useFileStore((state) => state.files);
   const addFiles = useFileStore((state) => state.addFiles);
+  const selectedFiles = useFileStore((state) => state.selectedFiles);
+  const selectFiles = useFileStore((state) => state.selectFile);
+  const deleteFile = useFileStore((state) => state.deleteFile);
+  const removeSelectedFile=useFileStore((state)=>state.removeSelectedFile);
 
   const [fileAvailable, setFileAvailable] = useState(false);
   const [isLoadingConversation, setIsLoadingConversation] = useState(false);
@@ -25,21 +24,12 @@ export const TitleAndDropdown = () => {
   const handleSubmit = (event: { preventDefault: () => void }) => {
     setIsLoadingConversation(true);
     event.preventDefault();
-    setTimeout(() => {
-      router.push(`/documents/scdkcidhc`);
-    }, 2500);
+    router.push(`/documents/scdkcidhc`);
+    // setTimeout(() => {
+    // }, 2500);
   };
 
 
-  // const { boot } = useIntercom();
-
-  // useEffect(() => {
-  //   boot();
-  // }, []);
-
-  const [formState, setFormState] = React.useState<FormState>({
-    excelFiles: [],
-  });
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     console.log(acceptedFiles);
@@ -61,12 +51,10 @@ export const TitleAndDropdown = () => {
 
     if (excelFiles.length > 0) {
       addFiles(excelFiles);
-      setFormState({ excelFiles });
     } else {
-      setFormState({ excelFiles: [] });
       alert("Please select only Excel or CSV files.");
     }
-  }, []);
+  }, [addFiles]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -81,10 +69,7 @@ export const TitleAndDropdown = () => {
   });
 
   const renderFiles = () => {
-    const selectedFiles = useFileStore((state) => state.selectedFiles);
-    const selectFiles = useFileStore((state) => state.selectFile);
-    const deleteFile = useFileStore((state) => state.deleteFile);
-    const removeSelectedFile=useFileStore((state)=>state.removeSelectedFile);
+
 
     const toggleSelectFile = (file: File) => {
       if (selectedFiles.includes(file)) {
@@ -157,7 +142,7 @@ export const TitleAndDropdown = () => {
               {isDragActive ? (
                 <p>Drop the files here ...</p>
               ) : (
-                <p>Drag 'n' drop some files here, or click to select files</p>
+                <p>Drag &apso;n drop excel files here, or click to select files</p>
               )}
             </div>
           </div>
