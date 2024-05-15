@@ -12,6 +12,7 @@ export const DisplayMultiplePdfs: React.FC<DisplayMultiplePdfsProps> = ({
   pdfs,
 }) => {
   const { isActivePdf, handlePdfFocus } = useMultiplePdfs(pdfs);
+console.log(isActivePdf);
 
   return (
     <>
