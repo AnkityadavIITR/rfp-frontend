@@ -4,14 +4,17 @@ import { PdfFocusProvider } from "~/context/pdf";
 
 import type { ChangeEvent } from "react";
 import DisplayMultiplePdfs from "~/components/pdf-viewer/DisplayMultiplePdfs";
-import useMessages from "~/hooks/useMessages";
-import { backendClient } from "~/api/backend";
 import { RenderConversations as RenderConversations } from "~/components/conversations/RenderConversations";
 import { BiArrowBack } from "react-icons/bi";
 import { SecDocument } from "~/types/document";
-import { useModal } from "~/hooks/utils/useModal";
 import { useIntercom } from "react-use-intercom";
 import useIsMobile from "~/hooks/utils/useIsMobile";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../../components/ui/accordion";
 
 export default function Conversation() {
   const router = useRouter();
@@ -22,60 +25,37 @@ export default function Conversation() {
     shutdown();
   }, []);
 
-  const { isOpen: isShareModalOpen, toggleModal: toggleShareModal } =
-    useModal();
-
   const { isMobile } = useIsMobile();
 
   const [conversationId, setConversationId] = useState<string | null>(null);
-  const [isMessagePending, setIsMessagePending] = useState(false);
   const [userMessage, setUserMessage] = useState("");
-  const [selectedDocuments, setSelectedDocuments] = useState<SecDocument[]>([]);
-  const { messages, userSendMessage, systemSendMessage, setMessages } =
-    useMessages(conversationId || "");
 
   const textFocusRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
-    // router can have multiple query params which would then return string[]
     if (id && typeof id === "string") {
       setConversationId(id);
     }
   }, [id]);
 
-  useEffect(() => {
-    const fetchConversation = async (id: string) => {
-      const result = await backendClient.fetchConversation(id);
-      if (result.messages) {
-        setMessages(result.messages);
-      }
-      if (result.documents) {
-        setSelectedDocuments(result.documents);
-      }
-    };
-    if (conversationId) {
-      fetchConversation(conversationId).catch(() =>
-        console.error("Conversation Load Error")
-      );
-    }
-  }, [conversationId, setMessages]);
-
-const pdfData=[
-  {
-    ticker:"sacadc",
-    fullName:"ankit",
-    id:"kcsdc",
-    url:"https://d687lz8k56fia.cloudfront.net/sec-edgar-filings/0000320193/10-K/0000320193-23-000106/primary-document.pdf",
-    year:"2012",
-  },  
-  {
-    ticker:"dscnjsbdv",
-    fullName:"ankit-2",
-    id:"sdcuydvdv",
-    url:"https://d687lz8k56fia.cloudfront.net/sec-edgar-filings/0000200406/10-Q/0000200406-23-000082/filing-details.pdf",
-    year:"2012",
-  },  
-]
+  const pdfData = [
+    {
+      ticker: "sacadc",
+      fullName: "ankit",
+      id: "kcsdc",
+      url: "https://d687lz8k56fia.cloudfront.net/sec-edgar-filings/0000320193/10-K/0000320193-23-000106/primary-document.pdf",
+      year: "2012",
+      quarter: "2",
+    },
+    {
+      ticker: "dscnjsbdv",
+      fullName: "ankit-2",
+      id: "sdcuydvdv",
+      url: "https://d687lz8k56fia.cloudfront.net/sec-edgar-filings/0000200406/10-Q/0000200406-23-000082/filing-details.pdf",
+      year: "2012",
+      quarter: "2",
+    },
+  ];
 
   const setSuggestedMessage = (text: string) => {
     setUserMessage(text);
@@ -83,7 +63,6 @@ const pdfData=[
       textFocusRef.current.focus();
     }
   };
-
 
   if (isMobile) {
     return (
@@ -99,7 +78,7 @@ const pdfData=[
                 .push(`/`)
                 .catch(() => console.log("error navigating to conversation"));
             }}
-            className="m-4 rounded border bg-llama-indigo px-8 py-2 font-bold text-white hover:bg-[#3B3775]"
+            className="bg-llama-indigo m-4 rounded border px-8 py-2 font-bold text-white hover:bg-[#3B3775]"
           >
             Back Home
           </button>
@@ -120,19 +99,29 @@ const pdfData=[
                     .push("/")
                     .catch(() => console.error("error navigating home"));
                 }}
-                className="ml-4 flex items-center justify-center rounded px-2 font-light text-[#9EA2B0] hover:text-gray-90"
+                className="hover:text-gray-900 ml-4 flex items-center justify-center rounded px-2 font-light text-[#9EA2B0]"
               >
                 <BiArrowBack className="mr-1" /> Back to Document Selection
               </button>
-
             </div>
           </div>
-          <div className="flex max-h-[calc(100vh-114px)] w-[44vw] flex-grow flex-col overflow-scroll ">
-            <RenderConversations
-              messages={messages}
-              documents={selectedDocuments}
-              setUserMessage={setSuggestedMessage}
-            />
+          <div className="flex h-full w-[44vw] flex-grow flex-col overflow-scroll ">
+            <div className="w-[80%] mt-5 mx-auto">
+              <Accordion type="single" collapsible className="flex flex-col gap-5">
+                <AccordionItem value="item-1" className="border rounded-md p-2">
+                  <AccordionTrigger>Is it accessible?</AccordionTrigger>
+                  <AccordionContent>
+                    Yes. It adheres to the WAI-ARIA design pattern.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-2" className="border rounded-md p-2">
+                  <AccordionTrigger>Is it accessible?</AccordionTrigger>
+                  <AccordionContent>
+                    Yes. It adheres to the WAI-ARIA design pattern.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
           </div>
         </div>
         <div className="h-[100vh] w-max">

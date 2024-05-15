@@ -15,6 +15,6 @@ export interface SecDocument extends Ticker {
   url: string;
   year: string;
   // docType: DocumentType;
-  // quarter?: string;
+  quarter?: string;
   // color: DocumentColorEnum;
 }
