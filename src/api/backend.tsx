@@ -1,78 +1,98 @@
-// import { backendUrl } from "~/config";
-// import type { Message } from "~/types/conversation";
-// import type { BackendDocument } from "~/types/backend/document";
-// import { SecDocument } from "~/types/document";
-// import { fromBackendDocumentToFrontend } from "./utils/documents";
+import type { Message } from "~/types/conversation";
+import type { BackendDocument } from "~/types/backend/document";
+import { SecDocument } from "~/types/document";
+import { fromBackendDocumentToFrontend } from "./utils/documents";
 
-// interface CreateConversationPayload {
-//   id: string;
-// }
+interface CreateConversationPayload {
+  id: string;
+}
 
-// interface GetConversationPayload {
-//   id: string;
-//   messages: Message[];
-//   documents: BackendDocument[];
-// }
+const backendUrl=process.env.NEXT_PUBLIC_BACKEND_URL;
 
-// interface GetConversationReturnType {
-//   messages: Message[];
-//   documents: SecDocument[];
-// }
+interface GetConversationPayload {
+  id: string;
+  messages: Message[];
+  documents: BackendDocument[];
+}
 
-// class BackendClient {
-//   private async get(endpoint: string) {
-//     const url = backendUrl + endpoint;
-//     const res = await fetch(url);
+interface GetConversationReturnType {
+  messages: Message[];
+  documents: SecDocument[];
+}
 
-//     if (!res.ok) {
-//       throw new Error(`HTTP error! status: ${res.status}`);
-//     }
-//     return res;
-//   }
+class BackendClient {
+  private async get(endpoint: string) {
+    const url = backendUrl + endpoint;
+    const res = await fetch(url);
 
-//   private async post(endpoint: string, body?: any) {
-//     const url = backendUrl + endpoint;
-//     const res = await fetch(url, {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify(body),
-//     });
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    return res;
+  }
 
-//     if (!res.ok) {
-//       throw new Error(`HTTP error! status: ${res.status}`);
-//     }
-//     return res;
-//   }
+  private async post(endpoint: string, body?: any) {
+    const url = backendUrl + endpoint;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
 
-//   public async createConversation(documentIds: string[]): Promise<string> {
-//     const endpoint = "api/conversation/";
-//     const payload = { document_ids: documentIds };
-//     const res = await this.post(endpoint, payload);
-//     const data = (await res.json()) as CreateConversationPayload;
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    return res;
+  }
 
-//     return data.id;
-//   }
+  public async postExcelFile(endpoint:string, files:File[]){
+    const url = backendUrl + endpoint;
+    const formData = new FormData();
+    files.forEach((file)=>{
+      formData.append("files", file);
+    })
+    
+    const res = await fetch(url, {
+      method: "POST",
+      body: formData,
+    });
+    console.log(res);
+    
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    return res;
+  }
 
-//   public async fetchConversation(
-//     id: string
-//   ): Promise<GetConversationReturnType> {
-//     const endpoint = `api/conversation/${id}`;
-//     const res = await this.get(endpoint);
-//     const data = (await res.json()) as GetConversationPayload;
+  public async createConversation(files: File[]): Promise<string> {
+    const endpoint = "api/conversation/";
+    const payload = { files: files };
+    const res = await this.post(endpoint, payload);
+    const data = (await res.json()) as CreateConversationPayload;
 
-//     return {
-//       messages: data.messages,
-//       documents: fromBackendDocumentToFrontend(data.documents),
-//     };
-//   }
+    return data.id;
+  }
 
-//   public async fetchDocuments(): Promise<SecDocument[]> {
-//     const endpoint = `api/document/`;
-//     const res = await this.get(endpoint);
-//     const data = (await res.json()) as BackendDocument[];
-//     const docs = fromBackendDocumentToFrontend(data);
-//     return docs;
-//   }
-// }
+  public async fetchConversation(
+    id: string
+  ): Promise<GetConversationReturnType> {
+    const endpoint = `api/conversation/${id}`;
+    const res = await this.get(endpoint);
+    const data = (await res.json()) as GetConversationPayload;
 
-// export const backendClient = new BackendClient();
+    return {
+      messages: data.messages,
+      documents: fromBackendDocumentToFrontend(data.documents),
+    };
+  }
+
+  public async fetchDocuments(): Promise<SecDocument[]> {
+    const endpoint = `api/document/`;
+    const res = await this.get(endpoint);
+    const data = (await res.json()) as BackendDocument[];
+    const docs = fromBackendDocumentToFrontend(data);
+    return docs;
+  }
+}
+
+export const backendClient = new BackendClient();

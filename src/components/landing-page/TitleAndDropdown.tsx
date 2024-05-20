@@ -5,6 +5,7 @@ import cx from "classnames";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import { CloudUpload, Trash2 } from "lucide-react";
 import { useFileStore } from "~/utils/store/fileStore";
+import { backendClient } from "~/api/backend";
 
 export const TitleAndDropdown = () => {
   const router = useRouter();
@@ -19,18 +20,21 @@ export const TitleAndDropdown = () => {
   const [fileAvailable, setFileAvailable] = useState(false);
   const [isLoadingConversation, setIsLoadingConversation] = useState(false);
 
-  const handleSubmit = (event: { preventDefault: () => void }): void => {
+  const handleSubmit = async (event: {
+    preventDefault: () => void;
+  }): Promise<void> => {
     setIsLoadingConversation(true);
     event.preventDefault();
+    const formData = new FormData();
+    console.log("selectedFiles", selectedFiles[0]);
 
-    router.push(`/documents/scdkcidhc`).catch((error) => {
-      console.error("Error while routing:", error);
-    });
+    const response = await backendClient.postExcelFile("uploadexcel/", selectedFiles);
+    console.log("response", response);
   };
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      console.log(acceptedFiles);
+      // console.log(acceptedFiles);
 
       const excelFiles = acceptedFiles.filter((file) => {
         const fileNameParts = file.name.split(".");
@@ -80,7 +84,7 @@ export const TitleAndDropdown = () => {
         setFileAvailable(true);
       }
     };
-    console.log("selectedFiles", selectedFiles);
+    // console.log("selectedFiles", selectedFiles);
 
     return (
       <table className=" m-5">
@@ -125,7 +129,6 @@ export const TitleAndDropdown = () => {
 
   return (
     <div className="landing-page-gradient-1 font-lora relative flex h-max w-screen flex-col items-center ">
-      
       <div className="mt-28 flex flex-col items-center"></div>
       <div className="mt-5 flex h-min w-11/12 max-w-[1200px] flex-col items-center justify-center rounded-lg border-2 bg-white sm:min-h-[400px] md:w-9/12 ">
         <div className="p-4 text-center text-xl font-bold">
@@ -145,7 +148,7 @@ export const TitleAndDropdown = () => {
             {isDragActive ? (
               <p>Drop the files here ...</p>
             ) : (
-              <p>Drag&apos;n drop excel files here, or click to select files</p>
+              <p className="hover:cursor-default">Drag&apos;n drop excel files here, or click to select files</p>
             )}
           </div>
         </div>
