@@ -6,6 +6,7 @@ import { AiOutlineArrowRight } from "react-icons/ai";
 import { CloudUpload, Trash2 } from "lucide-react";
 import { useFileStore } from "~/utils/store/fileStore";
 import { backendClient } from "~/api/backend";
+import Link from "next/link";
 
 export const TitleAndDropdown = () => {
   const router = useRouter();
@@ -20,21 +21,9 @@ export const TitleAndDropdown = () => {
   const [fileAvailable, setFileAvailable] = useState(false);
   const [isLoadingConversation, setIsLoadingConversation] = useState(false);
 
-  const handleSubmit = async (event: {
-    preventDefault: () => void;
-  }): Promise<void> => {
-    setIsLoadingConversation(true);
-    event.preventDefault();
-    const formData = new FormData();
-    console.log("selectedFiles", selectedFiles[0]);
-
-    const response = await backendClient.postExcelFile("uploadexcel/", selectedFiles);
-    console.log("response", response);
-  };
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      // console.log(acceptedFiles);
 
       const excelFiles = acceptedFiles.filter((file) => {
         const fileNameParts = file.name.split(".");
@@ -84,7 +73,6 @@ export const TitleAndDropdown = () => {
         setFileAvailable(true);
       }
     };
-    // console.log("selectedFiles", selectedFiles);
 
     return (
       <table className=" m-5">
@@ -125,6 +113,13 @@ export const TitleAndDropdown = () => {
         </tbody>
       </table>
     );
+  };
+
+  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
+    event.preventDefault();
+    router.push("/conversation").catch((error) => {
+      console.error(error);
+    });
   };
 
   return (
@@ -168,7 +163,11 @@ export const TitleAndDropdown = () => {
             <div className="md:ml-12">
               <button
                 disabled={!fileAvailable}
-                onClick={handleSubmit}
+                onClick={()=>{
+                  router.push("/conversation").catch((error) => {
+                    console.error(error);
+                  })
+                }}
                 className={cx(
                   "bg-llama-indigo font-nunito disabled:bg-gray-30 m-4 rounded border px-6 py-2 text-white hover:bg-[#3B3775] ",
                   !fileAvailable

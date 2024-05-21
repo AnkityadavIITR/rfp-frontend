@@ -7,8 +7,7 @@ interface CreateConversationPayload {
   id: string;
 }
 
-const backendUrl=process.env.NEXT_PUBLIC_BACKEND_URL;
-
+const backendUrl: string = process.env.NEXT_PUBLIC_BACKEND_URL || '';
 interface GetConversationPayload {
   id: string;
   messages: Message[];
