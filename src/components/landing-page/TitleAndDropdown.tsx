@@ -164,7 +164,7 @@ export const TitleAndDropdown = () => {
               <button
                 disabled={!fileAvailable}
                 onClick={()=>{
-                  router.push("/conversation").catch((error) => {
+                  router.push("/documents").catch((error) => {
                     console.error(error);
                   })
                 }}

@@ -28,6 +28,8 @@ export default function Conversation() {
           "uploadexcel/",
           selectedFiles
         );
+        console.log(res);
+        
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
