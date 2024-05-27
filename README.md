@@ -1,6 +1,4 @@
-# SEC Insights Frontend
-
-This is SEC Insights, a tool that let's you analyze multiple financial documents, powered by LlamaIndex. [Live URL](https://secinsights.ai/)
+# SEC rfp Frontend
 
 ## Technical Details
 
@@ -11,7 +9,7 @@ Built with `next.js`, `tailwindcss`, and `typescript react`, based on the [T3 st
 This app consists of two main routes,
 
 1. `/`, located in `src/pages/index.tsx`. This route is the landing page, and consists of the document selector and a marketing section.
-2. `/conversation/{conversation_id}`, located in `src/pages/conversation/[id].tsx` This page consists of the chat window on the left hand side, and the pdf viewer on the right hand side.
+2. `/documents`, located in `src/pages/documents.tsx` This page consists of the chat window on the left hand side, and the pdf viewer on the right hand side.
 
 - PDFs are rendered using `react-pdf`; a single pdf is rendered by the `VirtualizedPdf.tsx` component
 - The Chat component is located in `RenderConversations.tsx`
