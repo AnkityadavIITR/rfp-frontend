@@ -40,10 +40,10 @@ const useQuestionStore = create<QuestionState>()(
         set((state)=>({
           activeQuery:num,
         })),
-      addApiResponse:(res)=>
-        set((state)=>({
-          apiResponse:[...state.apiResponse,res]
-        })),  
+        addApiResponse: (res) =>
+          set((state) => ({
+            apiResponse: [...state.apiResponse, res],
+          })),
       addFileUrl: (file) => 
         set((state) => {
           const existingFile = state.fileUrls.find((f) => f.filename === file.filename);

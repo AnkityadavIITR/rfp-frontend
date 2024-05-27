@@ -17,6 +17,7 @@ import { backendClient } from "~/api/backend";
 import { useQuestionStore, clearData } from "~/utils/store/questionStore";
 import { v4 as uuid } from 'uuid';
 import ReactMarkdown from 'react-markdown';
+import { chunk } from "lodash";
 
 interface PdfViewerProps {
   pdfData: any[];
@@ -51,26 +52,30 @@ export default function Conversation() {
             console.log("message", responseData.message);
             const response = formatMarkdown(responseData.message)
             addResponse(response);
+            console.log("reponse chunks",responseData.Chunks);
+            console.log("respose fiels",responseData.pdfNames);
+            
+            
+            addApiResponse({
+              reponseMessage:response,
+              chunks:responseData.Chunks,
+              files: responseData.pdfNames.map((pdfName: string, index: number) => ({
+                id: uuid(),
+                filename: pdfName,
+                url: responseData.fileUrls[index],
+              })),
+            })
 
-            // addApiResponse({
-            //   reponseMessage:response,
-            //   chunks:responseData.chunks.map((chunk:string)=>(chunk)),
-            //   files: responseData.pdfNames.map((pdfName: string, index: number) => ({
-            //     id: uuid(),
-            //     filename: pdfName,
-            //     url: responseData.fileUrls[index],
-            //   })),
-            // })
-            responseData.pdfNames.forEach((pdfName: string, index: number) => {
-              const existingFile = fileUrls.find(file => file.filename === pdfName);
-              if (!existingFile) {
-                addFileUrls({
-                  id: uuid(),
-                  filename: pdfName,
-                  url: responseData.fileUrls[index]
-                });
-              }
-            });
+            // responseData.pdfNames.forEach((pdfName: string, index: number) => {
+            //   const existingFile = fileUrls.find(file => file.filename === pdfName);
+            //   if (!existingFile) {
+            //     addFileUrls({
+            //       id: uuid(),
+            //       filename: pdfName,
+            //       url: responseData.fileUrls[index]
+            //     });
+            //   }
+            // });
             setLoading(false);
           }))
       } catch (e) {
@@ -84,8 +89,15 @@ export default function Conversation() {
       fetchData();
     }
   }, []);
-  console.log("apiresponse", apiResponse);
-
+  // console.log("fileUrls",fileUrls);
+  console.log("apiresponse",apiResponse);
+  
+  useEffect(()=>{
+    if(apiResponse[0] && apiResponse.length>0){
+      setLoading(false)
+    }
+  },[])
+ 
 
   const formatMarkdown = (message: string): string => {
     const lines: string[] = message.split('\n');
@@ -169,30 +181,35 @@ export default function Conversation() {
             <div className="flex h-full w-[44vw] flex-grow flex-col overflow-scroll ">
               <div className="mx-auto  w-[100%] flex flex-col text-left">
                 {
-                  queries.map((query, i) => {
-                    return (
-                      <Accordion
-                        type="single"
-                        collapsible
-                        className="flex flex-col  "
-                        key={i}
-                        defaultValue="item-0"
-                      >
-                        <AccordionItem
-                          value={`item-${i}`}
-                          className=" bg-gray-200 text-left"
-                        >
-                          <AccordionTrigger className="text-left p-[10px]">{query}</AccordionTrigger>
-                          <AccordionContent className="bg-white p-[10px] mb-0 text-gray-700">
-                            {responses[i] ? <ReactMarkdown className="leading-1">{responses[i]}</ReactMarkdown> : <><div className="loader h-4 w-4 rounded-full border-2 border-gray-200 ease-linear"></div><p className="mr-1">processing</p></>}
-                          </AccordionContent>
-                        </AccordionItem>
-                        <hr className="w-[2px] bg-gray-700" />
-
-                      </Accordion>
-
-                    )
-                  })
+                  <Accordion type="single" collapsible className="flex flex-col" defaultValue={`item-0`}>
+                  {queries.map((query, i) => (
+                    <AccordionItem value={`item-${i}`} className="bg-gray-200 text-left" key={i}>
+                      <AccordionTrigger className="text-left p-[10px]" onClick={() => setActiveQuery(i)}>
+                        {query}
+                      </AccordionTrigger>
+                      <AccordionContent className="bg-white p-[10px] mb-0 text-gray-700">
+                        {responses[i] ? (<>
+                          <ReactMarkdown className="leading-1">{responses[i]}</ReactMarkdown>
+                          <div className="flex gap-x-2 overflow-x-auto mt-1">
+                            {
+                              apiResponse[activeQuery]?.chunks.map((chunk)=>{
+                                return <div className="max-w-[200px] line-clamp-2 hover:cursor-pointer border p-1 rounded-md bg-gray-200 hover:bg-slate-200 text-gray-700 text-[12px]">
+                                  <p className="border-l-4 border-yellow-400 pl-1">{chunk}</p>
+                                </div>
+                              })
+                            }
+                          </div>
+                        </>
+                        ) : (
+                          <>
+                            <div className="loader h-4 w-4 rounded-full border-2 border-gray-200 ease-linear"></div>
+                            <p className="mr-1">processing</p>
+                          </>
+                        )}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
                 }
               </div>
 
@@ -200,7 +217,7 @@ export default function Conversation() {
           </div>
           <div className="h-[100vh] w-full">
             {
-              loading ? <div className="w-full h-full flex justify-center items-center "><h1>loading...</h1></div> : <DisplayMultiplePdfs fileUrls={fileUrls} />
+              loading ? <div className="w-full h-full flex justify-center items-center "><h1>loading...</h1></div> : <DisplayMultiplePdfs fileUrls={apiResponse[activeQuery]?.files || []} />
             }
 
           </div>
