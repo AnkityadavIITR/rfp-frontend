@@ -1,3 +1,4 @@
+import { stat } from 'fs';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -6,9 +7,19 @@ interface FileUrl {
   filename: string;
   url: string;
 }
+interface Response{
+  reponseMessage:string,
+  files?:FileUrl[],
+  chunks:string[],
+}
+
 
 interface QuestionState {
   queries: string[];
+  activeQuery:number;
+  apiResponse:Response[];
+  addApiResponse:(res:Response)=>void;
+  setActiveQuery:(num:number)=>void;
   fileUrls:FileUrl[];
   addFileUrl: (files: FileUrl) => void;
   responses: string[];
@@ -23,6 +34,16 @@ const useQuestionStore = create<QuestionState>()(
     (set) => ({
       queries: [],
       fileUrls:[],
+      activeQuery:0,
+      apiResponse:[],
+      setActiveQuery:(num)=>
+        set((state)=>({
+          activeQuery:num,
+        })),
+      addApiResponse:(res)=>
+        set((state)=>({
+          apiResponse:[...state.apiResponse,res]
+        })),  
       addFileUrl: (file) => 
         set((state) => {
           const existingFile = state.fileUrls.find((f) => f.filename === file.filename);
@@ -53,7 +74,7 @@ const useQuestionStore = create<QuestionState>()(
 );
 
 function clearData() {
-  useQuestionStore.setState({ queries: [], responses: [],fileUrls:[] }); // Reset Zustand store
+  useQuestionStore.setState({ queries: [], responses: [],fileUrls:[],apiResponse:[] }); // Reset Zustand store
   localStorage.removeItem('questions-storage'); // Remove item from local storage
 }
 

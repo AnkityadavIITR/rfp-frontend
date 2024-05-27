@@ -47,7 +47,7 @@ export const DisplayMultiplePdfs: React.FC<DisplayMultiplePdfsProps> = ({ fileUr
                     : ""
                     }`}
                 >
-                  <div className="text-left line-clamp-1">
+                  <div className="text-left text-[11px] line-clamp-3">
                     {file.filename}
                   </div>
                 </div>
