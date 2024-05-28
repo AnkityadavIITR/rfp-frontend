@@ -15,12 +15,12 @@ import {
 import { useFileStore } from "~/utils/store/fileStore";
 import { backendClient } from "~/api/backend";
 import { useQuestionStore, clearData } from "~/utils/store/questionStore";
-import { v4 as uuid } from 'uuid';
-import ReactMarkdown from 'react-markdown';
-// import { chunk } from "lodash";
+import { v4 as uuid } from "uuid";
+import ReactMarkdown from "react-markdown";
 import { usePdfFocus } from "~/context/pdf";
 import { Citation } from "~/types/conversation";
 import { Button } from "~/components/ui/button";
+import { Textarea } from "~/components/ui/textarea";
 
 interface PdfViewerProps {
   pdfData: any[];
@@ -32,37 +32,42 @@ export default function Conversation() {
   const [loading, setLoading] = useState(true);
 
   const queries = useQuestionStore((state) => state.queries);
-  const responses = useQuestionStore((state) => state.responses)
-  const addResponse = useQuestionStore((state) => state.addResponse)
+  const responses = useQuestionStore((state) => state.responses);
+  const addResponse = useQuestionStore((state) => state.addResponse);
   const activeQuery = useQuestionStore((state) => state.activeQuery);
   const setActiveQuery = useQuestionStore((state) => state.setActiveQuery);
   const addApiResponse = useQuestionStore((state) => state.addApiResponse);
   const apiResponse = useQuestionStore((state) => state.apiResponse);
-
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         await Promise.all(
           queries.map(async (question, index) => {
-            const res = await backendClient.fetchQuery("/processquery/", question);
+            const res = await backendClient.fetchQuery(
+              "/processquery/",
+              question
+            );
             const responseData = await res.json();
             console.log("res", responseData);
             //format the response before saving
-            const response = formatMarkdown(responseData.message)
+            const response = formatMarkdown(responseData.message);
             addResponse(response);
             //save the response
             addApiResponse({
               reponseMessage: response,
               chunks: responseData.Chunks,
-              files: responseData.pdfNames.map((pdfName: string, index: number) => ({
-                id: uuid(),
-                filename: pdfName,
-                url: responseData.fileUrls[index],
-              })),
-            })
+              files: responseData.pdfNames.map(
+                (pdfName: string, index: number) => ({
+                  id: uuid(),
+                  filename: pdfName,
+                  url: responseData.fileUrls[index],
+                })
+              ),
+            });
             setLoading(false);
-          }))
+          })
+        );
       } catch (e) {
         console.error(e);
       }
@@ -75,18 +80,17 @@ export default function Conversation() {
 
   useEffect(() => {
     if (apiResponse[0] && apiResponse.length > 0) {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
-
+  }, []);
 
   const formatMarkdown = (message: string): string => {
-    const lines: string[] = message.split('\n');
-    let formattedMessage: string = '';
+    const lines: string[] = message.split("\n");
+    let formattedMessage: string = "";
 
     let currentHeadingLevel: number = 2;
     let currentNumber: number | null = null;
-    let currentSubheadingLetter: string = 'a';
+    let currentSubheadingLetter: string = "a";
 
     lines.forEach((line: string, index: number) => {
       const numberMatch = line.match(/^\d+\./);
@@ -96,18 +100,24 @@ export default function Conversation() {
           const newNumber = parseInt(number, 10);
           if (currentNumber === null || newNumber !== currentNumber) {
             currentNumber = newNumber;
-            formattedMessage += `### ${currentNumber}. ${line.slice(line.indexOf('.') + 1).trim()}\n\n`;
-            currentSubheadingLetter = 'a';
+            formattedMessage += `### ${currentNumber}. ${line
+              .slice(line.indexOf(".") + 1)
+              .trim()}\n\n`;
+            currentSubheadingLetter = "a";
           } else {
-            formattedMessage += `   ${currentSubheadingLetter}. ${line.slice(line.indexOf('.') + 1).trim()}\n`;
-            currentSubheadingLetter = String.fromCharCode(currentSubheadingLetter.charCodeAt(0) + 1);
+            formattedMessage += `   ${currentSubheadingLetter}. ${line
+              .slice(line.indexOf(".") + 1)
+              .trim()}\n`;
+            currentSubheadingLetter = String.fromCharCode(
+              currentSubheadingLetter.charCodeAt(0) + 1
+            );
           }
         }
-      } else if (line.startsWith('- **')) {
+      } else if (line.startsWith("- **")) {
         formattedMessage += `      - ${line.slice(4).trim()}\n`;
-      } else if (line.startsWith('   - ')) {
+      } else if (line.startsWith("   - ")) {
         formattedMessage += `         - ${line.slice(5).trim()}\n`;
-      } else if (line.trim() !== '') {
+      } else if (line.trim() !== "") {
         formattedMessage += `${line.trim()}\n\n`;
         currentHeadingLevel = 2;
       }
@@ -119,36 +129,45 @@ export default function Conversation() {
   const ChunkDisplay = () => {
     const { setPdfFocusState } = usePdfFocus();
 
-    const handleCitationClick = (documentId: string, pageNumber: number, citation: Citation) => {
+    const handleCitationClick = (
+      documentId: string,
+      pageNumber: number,
+      citation: Citation
+    ) => {
       console.log("documentid", documentId);
       console.log("pgn", pageNumber);
       console.log("cita", citation);
       setPdfFocusState({ documentId, pageNumber, citation });
     };
 
-    return <div className="flex gap-x-2 overflow-x-auto mt-1">
-      {
-        apiResponse[activeQuery] && apiResponse[activeQuery]?.chunks.map((chunk, i) => {
-          return <div
-            onClick={() =>
-              handleCitationClick(
-                apiResponse[activeQuery]?.files?.[i]?.id || "",
-                1,
-                {
-                  documentId: apiResponse[activeQuery]?.files?.[i]?.id || "",
-                  snippet: chunk || "",
-                  pageNumber: 1,
-                  highlightColor: "yellow",
-                } as Citation
-              )
-            }
-            className="max-w-[200px] line-clamp-2 hover:cursor-pointer border p-1 rounded-md bg-gray-200 hover:bg-slate-200 text-gray-700 text-[12px]">
-            <p className="border-l-4 border-yellow-400 pl-1">{chunk}</p>
-          </div>
-        })
-      }
-    </div>
-  }
+    return (
+      <div className="mt-1 flex gap-x-2 overflow-x-auto">
+        {apiResponse[activeQuery] &&
+          apiResponse[activeQuery]?.chunks.map((chunk, i) => {
+            return (
+              <div
+                onClick={() =>
+                  handleCitationClick(
+                    apiResponse[activeQuery]?.files?.[i]?.id || "",
+                    1,
+                    {
+                      documentId:
+                        apiResponse[activeQuery]?.files?.[i]?.id || "",
+                      snippet: chunk || "",
+                      pageNumber: 1,
+                      highlightColor: "yellow",
+                    } as Citation
+                  )
+                }
+                className="line-clamp-2 max-w-[200px] rounded-md border bg-gray-200 p-1 text-[12px] text-gray-700 hover:cursor-pointer hover:bg-slate-200"
+              >
+                <p className="border-l-4 border-yellow-400 pl-1">{chunk}</p>
+              </div>
+            );
+          })}
+      </div>
+    );
+  };
 
   if (isMobile) {
     return (
@@ -173,7 +192,15 @@ export default function Conversation() {
     );
   }
 
-
+  const [isEditing, setIsEditing] = useState(false);
+  const [editableResponse, setEditableResponse] = useState("");
+  const handleSaveResponse = async() => {
+    try{
+      setIsEditing(false)
+    }catch(e){
+      console.log("error saving response", e)
+    }
+  };
   return (
     <>
       <PdfFocusProvider>
@@ -195,22 +222,71 @@ export default function Conversation() {
               </div>
             </div>
             <div className="flex h-full w-[44vw] flex-grow flex-col overflow-scroll ">
-              <div className="mx-auto  w-[100%] flex flex-col text-left">
+              <div className="mx-auto  flex w-[100%] flex-col text-left">
                 {
-                  <Accordion type="single" collapsible className="flex flex-col gap-y-1" defaultValue={`item-0`}>
+                  <Accordion
+                    type="single"
+                    collapsible
+                    className="flex flex-col gap-y-1"
+                    defaultValue={`item-0`}
+                  >
                     {queries.map((query, i) => (
-                      <AccordionItem value={`item-${i}`} className="bg-gray-200 text-left" key={i}>
-                        <AccordionTrigger className="text-left p-[10px]" onClick={() => setActiveQuery(i)}>
+                      <AccordionItem
+                        value={`item-${i}`}
+                        className="bg-gray-200 text-left"
+                        key={i}
+                      >
+                        <AccordionTrigger
+                          className="p-[10px] text-left"
+                          onClick={() => setActiveQuery(i)}
+                        >
                           {query}
                         </AccordionTrigger>
-                        <AccordionContent className="bg-white p-[10px] mb-0 text-gray-700">
-                          {responses[i] ? (<>
-                            <ReactMarkdown className="leading-1">{responses[i]}</ReactMarkdown>
-                            <div className="flex w-full">
-                              <Button className="self-end">Edit response</Button>
-                            </div>
-                            <ChunkDisplay />
-                          </>
+                        <AccordionContent className="mb-0 bg-white p-[10px] text-gray-700">
+                          {responses[i] ? (
+                            <>
+                              {!isEditing ? (
+                                <>
+                                  <ReactMarkdown className="leading-1">
+                                    {responses[i]}
+                                  </ReactMarkdown>
+                                  <div className="mt-2 flex w-full">
+                                    <Button
+                                      className="self-end"
+                                      onClick={() => {
+                                        setIsEditing(true);
+                                        setEditableResponse(responses[i] || "");
+                                      }}
+                                    >
+                                      Edit response
+                                    </Button>
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                <div className="w-full">
+                                  <Textarea
+                                    value={editableResponse}
+                                    onChange={(e) =>
+                                      setEditableResponse(e.target.value)
+                                    }
+                                    className="h-32 w-full rounded border p-2"
+                                  />
+                                </div>
+                                  <div className="mt-2 flex w-full">
+                                    <Button
+                                      className="self-end"
+                                      onClick={() => {
+                                        handleSaveResponse();
+                                      }}
+                                    >
+                                      Edit response
+                                    </Button>
+                                  </div>
+                                </>
+                              )}
+                              <ChunkDisplay />
+                            </>
                           ) : (
                             <>
                               <div className="loader h-4 w-4 rounded-full border-2 border-gray-200 ease-linear"></div>
@@ -223,19 +299,21 @@ export default function Conversation() {
                   </Accordion>
                 }
               </div>
-
             </div>
           </div>
           <div className="h-[100vh] w-full">
-            {
-              loading ? <div className="w-full h-full flex justify-center items-center "><h1>loading...</h1></div> : <DisplayMultiplePdfs fileUrls={apiResponse[activeQuery]?.files || []} />
-            }
-
+            {loading ? (
+              <div className="flex h-full w-full items-center justify-center ">
+                <h1>loading...</h1>
+              </div>
+            ) : (
+              <DisplayMultiplePdfs
+                fileUrls={apiResponse[activeQuery]?.files || []}
+              />
+            )}
           </div>
         </div>
       </PdfFocusProvider>
-
-
     </>
   );
 }
