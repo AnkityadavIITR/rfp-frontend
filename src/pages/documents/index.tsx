@@ -20,8 +20,7 @@ import ReactMarkdown from 'react-markdown';
 // import { chunk } from "lodash";
 import { usePdfFocus } from "~/context/pdf";
 import { Citation } from "~/types/conversation";
-import { log } from "console";
-
+import { Button } from "~/components/ui/button";
 
 interface PdfViewerProps {
   pdfData: any[];
@@ -49,14 +48,10 @@ export default function Conversation() {
             const res = await backendClient.fetchQuery("/processquery/", question);
             const responseData = await res.json();
             console.log("res", responseData);
-
-            // console.log("message", responseData.message);
+            //format the response before saving
             const response = formatMarkdown(responseData.message)
             addResponse(response);
-            // console.log("reponse chunks", responseData.Chunks);
-            // console.log("respose fiels", responseData.pdfNames);
-
-
+            //save the response
             addApiResponse({
               reponseMessage: response,
               chunks: responseData.Chunks,
@@ -66,17 +61,6 @@ export default function Conversation() {
                 url: responseData.fileUrls[index],
               })),
             })
-
-            // responseData.pdfNames.forEach((pdfName: string, index: number) => {
-            //   const existingFile = fileUrls.find(file => file.filename === pdfName);
-            //   if (!existingFile) {
-            //     addFileUrls({
-            //       id: uuid(),
-            //       filename: pdfName,
-            //       url: responseData.fileUrls[index]
-            //     });
-            //   }
-            // });
             setLoading(false);
           }))
       } catch (e) {
@@ -88,7 +72,6 @@ export default function Conversation() {
       fetchData();
     }
   }, []);
-  // console.log("fileUrls",fileUrls);
 
   useEffect(() => {
     if (apiResponse[0] && apiResponse.length > 0) {
@@ -223,6 +206,9 @@ export default function Conversation() {
                         <AccordionContent className="bg-white p-[10px] mb-0 text-gray-700">
                           {responses[i] ? (<>
                             <ReactMarkdown className="leading-1">{responses[i]}</ReactMarkdown>
+                            <div className="flex w-full">
+                              <Button className="self-end">Edit response</Button>
+                            </div>
                             <ChunkDisplay />
                           </>
                           ) : (

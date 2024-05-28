@@ -20,9 +20,7 @@ export const multiHighlight = (
   pageNumber: number,
   color:string
 ) => {
-  // console.log("highlight text-",textToHighlight);
-  // console.log("pgnumber",pageNumber);
-  
+
   
   const highlightColor = color;
   const spans = document.querySelectorAll(
@@ -40,7 +38,7 @@ export const multiHighlight = (
       words.push({ text, spanIdx, wordIdx });
     });
   });
-  // console.log("words",words);
+
   
 
   let searchString = textToHighlight;
@@ -53,8 +51,7 @@ export const multiHighlight = (
     console.log("searchstring before",searchString);
     
     const searchWords = searchString.split(" ");
-    // console.log("searchstring after",searchString);
-    // console.log("searchwrods",searchWords);
+
   const lenSearchString = searchWords.length;
   if (!lenSearchString) {
     return;
@@ -101,7 +98,6 @@ export const multiHighlight = (
         if (startWordIdx === 0) {
           highlightHtmlElement(spanToHighlight, highlightColor);
         } else {
-          // console.log("startwordidx",startWordIdx);
           
           partialHighlight(startWordIdx, spanToHighlight, DIRECTION.START);
         }
@@ -109,7 +105,6 @@ export const multiHighlight = (
         if (endWordIdx === 0) {
           return;
         } else {
-          // console.log("endwordidx",startWordIdx);
 
           partialHighlight(endWordIdx, spanToHighlight, DIRECTION.END);
         }
