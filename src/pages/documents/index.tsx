@@ -195,10 +195,14 @@ export default function Conversation() {
   const [isEditing, setIsEditing] = useState(false);
   const [editableResponse, setEditableResponse] = useState("");
   const handleSaveResponse = async() => {
-    try{
-      setIsEditing(false)
-    }catch(e){
-      console.log("error saving response", e)
+    if(queries[activeQuery] && editableResponse!=""){
+      try{
+        const res=await backendClient.saveQna("/saveqna/",queries[activeQuery] || "",editableResponse);
+        console.log("Res",res);
+        setIsEditing(false)
+      }catch(e){
+        console.log("error saving response", e)
+      }
     }
   };
   return (

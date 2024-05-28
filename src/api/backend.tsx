@@ -86,6 +86,29 @@ class BackendClient {
     return res;
   }
 
+  public async saveQna(endpoint:string,query:string,newAns:string):Promise<any>{
+    const url = backendUrl + endpoint;
+    const qna={
+      question:query,
+      answer:newAns
+    }
+    try{
+      const response=await fetch(url,{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify(qna)
+      })
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      return response;
+    }catch(e){
+      console.log("error saving qna",e);
+    }
+  }
+
   public async fetchQuery(endpoint: string, query: string): Promise<Response> {
     const url = backendUrl + endpoint;
     const requestData = {
