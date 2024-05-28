@@ -12,7 +12,7 @@ interface DisplayMultiplePdfsProps {
 
 export const DisplayMultiplePdfs: React.FC<DisplayMultiplePdfsProps> = ({ fileUrls }) => {
 
-  console.log("filesurls",fileUrls);
+  // console.log("filesurls",fileUrls);
   
   const { isActivePdf, handlePdfFocus } = useMultiplePdfs(fileUrls);
 

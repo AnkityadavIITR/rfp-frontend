@@ -18,9 +18,13 @@ interface WordData {
 export const multiHighlight = (
   textToHighlight: string,
   pageNumber: number,
-  color = DocumentColorEnum.yellow
+  color:string
 ) => {
-  const highlightColor = highlightColors[color];
+  // console.log("highlight text-",textToHighlight);
+  // console.log("pgnumber",pageNumber);
+  
+  
+  const highlightColor = color;
   const spans = document.querySelectorAll(
     `div[data-page-number='${
       pageNumber + 1
@@ -36,6 +40,8 @@ export const multiHighlight = (
       words.push({ text, spanIdx, wordIdx });
     });
   });
+  // console.log("words",words);
+  
 
   let searchString = textToHighlight;
   searchString = searchString.replace(/\s{2,}/g, " ");
@@ -44,14 +50,18 @@ export const multiHighlight = (
     .toString()
     .trim()
     .replace(/(\r\n|\n|\r)/g, "");
-
-  const searchWords = searchString.split(" ");
+    console.log("searchstring before",searchString);
+    
+    const searchWords = searchString.split(" ");
+    // console.log("searchstring after",searchString);
+    // console.log("searchwrods",searchWords);
   const lenSearchString = searchWords.length;
   if (!lenSearchString) {
     return;
   }
-
-  const firstWord = searchWords[0];
+  console.log("lenserachstring",lenSearchString);
+  
+  const firstWord = searchWords[1];
   if (!firstWord) {
     return;
   }
@@ -60,7 +70,8 @@ export const multiHighlight = (
     words,
     lenSearchString
   );
-
+  console.log("searchdata",searchData);
+  
   const options = {
     includeScore: true,
     threshold: 0.1, // Adjust this threshold according to your requirement.
@@ -73,6 +84,8 @@ export const multiHighlight = (
 
   const fuse = new Fuse(searchData, options);
   const result = fuse.search(searchString);
+  console.log("result",result);
+  
 
   if (result.length > 0) {
     const searchResult = result[0]?.item;
@@ -88,12 +101,16 @@ export const multiHighlight = (
         if (startWordIdx === 0) {
           highlightHtmlElement(spanToHighlight, highlightColor);
         } else {
+          // console.log("startwordidx",startWordIdx);
+          
           partialHighlight(startWordIdx, spanToHighlight, DIRECTION.START);
         }
       } else if (i == endSpan) {
         if (endWordIdx === 0) {
           return;
         } else {
+          // console.log("endwordidx",startWordIdx);
+
           partialHighlight(endWordIdx, spanToHighlight, DIRECTION.END);
         }
       } else {
@@ -109,7 +126,7 @@ const HIGHLIGHT_CLASSNAME = "opacity-40 saturate-[3] highlighted-by-llama ";
 const highlightHtmlElement = (div: HTMLElement, color: string) => {
   const text = div.textContent || "";
   const newSpan = document.createElement("span");
-  newSpan.className = HIGHLIGHT_CLASSNAME + color;
+  newSpan.className = HIGHLIGHT_CLASSNAME + "bg-yellow-500";
   newSpan.innerText = text;
   div.innerText = "";
   div.appendChild(newSpan);

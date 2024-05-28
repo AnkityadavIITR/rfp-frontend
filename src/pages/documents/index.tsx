@@ -17,7 +17,11 @@ import { backendClient } from "~/api/backend";
 import { useQuestionStore, clearData } from "~/utils/store/questionStore";
 import { v4 as uuid } from 'uuid';
 import ReactMarkdown from 'react-markdown';
-import { chunk } from "lodash";
+// import { chunk } from "lodash";
+import { usePdfFocus } from "~/context/pdf";
+import { Citation } from "~/types/conversation";
+import { log } from "console";
+
 
 interface PdfViewerProps {
   pdfData: any[];
@@ -27,21 +31,18 @@ export default function Conversation() {
   const router = useRouter();
   const { isMobile } = useIsMobile();
   const [loading, setLoading] = useState(true);
-  const [isFetching, setIsFetching] = useState(false);
 
   const queries = useQuestionStore((state) => state.queries);
   const responses = useQuestionStore((state) => state.responses)
   const addResponse = useQuestionStore((state) => state.addResponse)
-  const fileUrls = useQuestionStore((state) => state.fileUrls)
-  const addFileUrls = useQuestionStore((state) => state.addFileUrl);
   const activeQuery = useQuestionStore((state) => state.activeQuery);
   const setActiveQuery = useQuestionStore((state) => state.setActiveQuery);
   const addApiResponse = useQuestionStore((state) => state.addApiResponse);
   const apiResponse = useQuestionStore((state) => state.apiResponse);
 
+
   useEffect(() => {
     const fetchData = async () => {
-      setIsFetching(true);
       try {
         await Promise.all(
           queries.map(async (question, index) => {
@@ -49,16 +50,16 @@ export default function Conversation() {
             const responseData = await res.json();
             console.log("res", responseData);
 
-            console.log("message", responseData.message);
+            // console.log("message", responseData.message);
             const response = formatMarkdown(responseData.message)
             addResponse(response);
-            console.log("reponse chunks",responseData.Chunks);
-            console.log("respose fiels",responseData.pdfNames);
-            
-            
+            // console.log("reponse chunks", responseData.Chunks);
+            // console.log("respose fiels", responseData.pdfNames);
+
+
             addApiResponse({
-              reponseMessage:response,
-              chunks:responseData.Chunks,
+              reponseMessage: response,
+              chunks: responseData.Chunks,
               files: responseData.pdfNames.map((pdfName: string, index: number) => ({
                 id: uuid(),
                 filename: pdfName,
@@ -80,8 +81,6 @@ export default function Conversation() {
           }))
       } catch (e) {
         console.error(e);
-      } finally {
-        setIsFetching(false);
       }
     };
 
@@ -90,14 +89,13 @@ export default function Conversation() {
     }
   }, []);
   // console.log("fileUrls",fileUrls);
-  console.log("apiresponse",apiResponse);
-  
-  useEffect(()=>{
-    if(apiResponse[0] && apiResponse.length>0){
+
+  useEffect(() => {
+    if (apiResponse[0] && apiResponse.length > 0) {
       setLoading(false)
     }
-  },[])
- 
+  }, [])
+
 
   const formatMarkdown = (message: string): string => {
     const lines: string[] = message.split('\n');
@@ -135,6 +133,40 @@ export default function Conversation() {
     return formattedMessage;
   };
 
+  const ChunkDisplay = () => {
+    const { setPdfFocusState } = usePdfFocus();
+
+    const handleCitationClick = (documentId: string, pageNumber: number, citation: Citation) => {
+      console.log("documentid", documentId);
+      console.log("pgn", pageNumber);
+      console.log("cita", citation);
+      setPdfFocusState({ documentId, pageNumber, citation });
+    };
+
+    return <div className="flex gap-x-2 overflow-x-auto mt-1">
+      {
+        apiResponse[activeQuery] && apiResponse[activeQuery]?.chunks.map((chunk, i) => {
+          return <div
+            onClick={() =>
+              handleCitationClick(
+                apiResponse[activeQuery]?.files?.[i]?.id || "",
+                1,
+                {
+                  documentId: apiResponse[activeQuery]?.files?.[i]?.id || "",
+                  snippet: chunk || "",
+                  pageNumber: 1,
+                  highlightColor: "yellow",
+                } as Citation
+              )
+            }
+            className="max-w-[200px] line-clamp-2 hover:cursor-pointer border p-1 rounded-md bg-gray-200 hover:bg-slate-200 text-gray-700 text-[12px]">
+            <p className="border-l-4 border-yellow-400 pl-1">{chunk}</p>
+          </div>
+        })
+      }
+    </div>
+  }
+
   if (isMobile) {
     return (
       <div className="landing-page-gradient-1 relative flex h-screen w-screen items-center justify-center">
@@ -157,6 +189,7 @@ export default function Conversation() {
       </div>
     );
   }
+
 
   return (
     <>
@@ -181,35 +214,27 @@ export default function Conversation() {
             <div className="flex h-full w-[44vw] flex-grow flex-col overflow-scroll ">
               <div className="mx-auto  w-[100%] flex flex-col text-left">
                 {
-                  <Accordion type="single" collapsible className="flex flex-col" defaultValue={`item-0`}>
-                  {queries.map((query, i) => (
-                    <AccordionItem value={`item-${i}`} className="bg-gray-200 text-left" key={i}>
-                      <AccordionTrigger className="text-left p-[10px]" onClick={() => setActiveQuery(i)}>
-                        {query}
-                      </AccordionTrigger>
-                      <AccordionContent className="bg-white p-[10px] mb-0 text-gray-700">
-                        {responses[i] ? (<>
-                          <ReactMarkdown className="leading-1">{responses[i]}</ReactMarkdown>
-                          <div className="flex gap-x-2 overflow-x-auto mt-1">
-                            {
-                              apiResponse[activeQuery]?.chunks.map((chunk)=>{
-                                return <div className="max-w-[200px] line-clamp-2 hover:cursor-pointer border p-1 rounded-md bg-gray-200 hover:bg-slate-200 text-gray-700 text-[12px]">
-                                  <p className="border-l-4 border-yellow-400 pl-1">{chunk}</p>
-                                </div>
-                              })
-                            }
-                          </div>
-                        </>
-                        ) : (
-                          <>
-                            <div className="loader h-4 w-4 rounded-full border-2 border-gray-200 ease-linear"></div>
-                            <p className="mr-1">processing</p>
+                  <Accordion type="single" collapsible className="flex flex-col gap-y-1" defaultValue={`item-0`}>
+                    {queries.map((query, i) => (
+                      <AccordionItem value={`item-${i}`} className="bg-gray-200 text-left" key={i}>
+                        <AccordionTrigger className="text-left p-[10px]" onClick={() => setActiveQuery(i)}>
+                          {query}
+                        </AccordionTrigger>
+                        <AccordionContent className="bg-white p-[10px] mb-0 text-gray-700">
+                          {responses[i] ? (<>
+                            <ReactMarkdown className="leading-1">{responses[i]}</ReactMarkdown>
+                            <ChunkDisplay />
                           </>
-                        )}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
+                          ) : (
+                            <>
+                              <div className="loader h-4 w-4 rounded-full border-2 border-gray-200 ease-linear"></div>
+                              <p className="mr-1">processing</p>
+                            </>
+                          )}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
                 }
               </div>
 

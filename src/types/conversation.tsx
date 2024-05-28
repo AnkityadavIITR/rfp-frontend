@@ -23,10 +23,10 @@ export interface Citation {
   documentId: string;
   snippet: string;
   pageNumber: number;
-  ticker: string;
-  displayDate: string;
-  color: DocumentColorEnum;
-  highlightColor?:"yellow";
+  ticker?: string;
+  displayDate?: string;
+  color?: DocumentColorEnum;
+  highlightColor: string;
 }
 
 export interface Conversation extends hasId {
