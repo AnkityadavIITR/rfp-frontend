@@ -12,6 +12,7 @@ import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import Container from "../ui/container";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Input } from "../ui/input";
 
 export const TitleAndDropdown = () => {
   const router = useRouter();
@@ -23,15 +24,19 @@ export const TitleAndDropdown = () => {
   const selectFiles = useFileStore((state) => state.selectFile);
   const deleteFile = useFileStore((state) => state.deleteFile);
   const removeExcel = useFileStore((state) => state.removeExcel);
-  const queries=useQuestionStore((state)=>state.queries);
+  const queries = useQuestionStore((state) => state.queries);
   const addQuestions = useQuestionStore((state) => state.addQueries);
+  const removeQuery = useQuestionStore((state) => state.removeQuery);
 
   const [fileAvailable, setFileAvailable] = useState(false);
+
   const [loading, setLoading] = useState<boolean>(false);
   const [isPdfUploaded, setIsPdfUploaded] = useState<boolean>(false);
   const [isExcelUploaded, setIsExcelUploaded] = useState<boolean>(false);
   const [value, setValue] = useState<string>("Qna");
-  const [inputQuestion,setInputQuestion]=useState<boolean>(false);
+  const [inputQuestion, setInputQuestion] = useState<boolean>(false);
+  const [question, setQuestion] = useState<string>("");
+
   const onDropPdf = useCallback(
     (acceptedFiles: File[]) => {
       const pdfs = acceptedFiles.filter((file) => {
@@ -77,17 +82,18 @@ export const TitleAndDropdown = () => {
     [addFiles]
   );
 
-  const {
-    getRootProps: getRootPropsPdf,
-    getInputProps: getInputPropsPdf,
-    isDragActive: isDragActivePdf,
-  } = useDropzone({
-    onDrop: onDropPdf,
-    maxFiles: 10,
-    accept: {
-      "application/pdf": [".pdf"],
-    },
-  });
+  // const {
+  //   getRootProps: getRootPropsPdf,
+  //   getInputProps: getInputPropsPdf,
+  //   isDragActive: isDragActivePdf,
+  // } = useDropzone({
+  //   onDrop: onDropPdf,
+  //   maxFiles: 10,
+  //   accept: {
+  //     "application/pdf": [".pdf"],
+  //   },
+  // });
+
   const {
     getRootProps: getRootPropsExcel,
     getInputProps: getInputPropsExcel,
@@ -148,39 +154,20 @@ export const TitleAndDropdown = () => {
       });
     }
   };
-  const handleFileSubmit = async (): Promise<any> => {
-    try {
-      setLoading(true);
-      setFileAvailable(true);
 
-      const pdfResponse = await backendClient.postPdfFile(
-        "/upload-files/",
-        files
-      );
-      const pdfData = await pdfResponse.json();
-      console.log("PDF response:", pdfData);
-
-      // Submit Excel files
-      const excelResponse = await backendClient.postExcelFile(
-        "/uploadexcel/",
-        excels
-      );
-      const excelData = await excelResponse.json();
-      console.log("Excel response:", excelData);
-      addQuestions(excelData.details);
-
-      router.push("/documents").catch((e) => {
-        console.log(e);
-      });
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
+  const handleSubmit=async()=>{
+    if(!inputQuestion){
+      setInputQuestion(true)
+    }else{
+      router.push("/documents")
     }
-  };
+  }
+
   const className = () => {
     if (inputQuestion) {
-      return queries.length > 0 ? "min-w-[80px] text-[14px]" : "bg-gray-400 text-[14px] hover:bg-gray-400";
+      return queries.length > 0
+        ? "min-w-[80px] text-[14px]"
+        : "bg-gray-400 text-[14px] hover:bg-gray-400";
     } else {
       return "min-w-[80px] text-[14px]";
     }
@@ -239,13 +226,39 @@ export const TitleAndDropdown = () => {
               </h1>
             </div>
             <div className="mt-2 flex  w-full flex-col justify-start gap-y-6 p-4 ">
-              {
-                inputQuestion && (
-                  <div>
-
-                  </div>
-                )
-              }
+              {inputQuestion && (
+                <div className="flex gap-x-2">
+                  <Input
+                    type="text"
+                    placeholder="ask question"
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                  />
+                  <Button onClick={() => addQuestions([question])}>Add</Button>
+                </div>
+              )}
+              {inputQuestion && queries.length > 0 && (
+                <div className="flex flex-col gap-y-2 mx-auto">
+                  {queries.map((query, index) => {
+                    return (
+                      <div key={index} className="flex gap-x-3">
+                        <p className="text-[14px] font-medium">{index + 1}</p>
+                        <p className="line-clamp-2 w-[280px] text-[14px] font-medium">
+                          {query}
+                        </p>
+                        <div className="flex">
+                          <Trash2
+                            onClick={() => removeQuery(index)}
+                            className="my-auto"
+                            size={16}
+                            strokeWidth={1.25}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
 
               <div className="mx-auto flex w-fit max-w-[90%] flex-col gap-y-2">
                 {files.length > 0 &&
@@ -298,22 +311,19 @@ export const TitleAndDropdown = () => {
                     );
                   })}
               </div>
-              <div className="flex mx-auto">
+              <div className="mx-auto flex">
                 <Button
                   disabled={inputQuestion && loading}
                   className={className()}
-                  onClick={()=>setInputQuestion(true)}
+                  onClick={handleSubmit}
                 >
                   {loading ? (
+
                     <div className="flex  items-center justify-center">
                       <div className="loader h-3 w-3 rounded-full border-2 border-gray-200 ease-linear"></div>
                     </div>
                   ) : (
-                    <>
-                    {
-                      !inputQuestion? "Ask a question":"submit"
-                    }
-                    </>
+                    <>{!inputQuestion ? "Ask a question" : "submit"}</>
                   )}
                 </Button>
               </div>

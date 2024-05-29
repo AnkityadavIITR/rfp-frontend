@@ -18,14 +18,18 @@ interface QuestionState {
   queries: string[];
   activeQuery:number;
   apiResponse:Response[];
+  askQuestion:boolean;
+  setAskQuestion:(ask:boolean)=>void;
   addApiResponse:(res:Response)=>void;
   setActiveQuery:(num:number)=>void;
   fileUrls:FileUrl[];
   addFileUrl: (files: FileUrl) => void;
   responses: string[];
   addQueries: (questions: string[]) => void;
+  removeQuery: (index:number)=>void;
   addResponse: (response: string) => void;
   clearQueries: () => void;
+
   setQuestions: (questions: string[]) => void;
 }
 
@@ -35,6 +39,10 @@ const useQuestionStore = create<QuestionState>()(
       queries: [],
       fileUrls:[],
       activeQuery:0,
+      askQuestion:false,
+      setAskQuestion(ask) {
+        set({askQuestion:ask});
+      },
       apiResponse:[],
       setActiveQuery:(num)=>
         set((state)=>({
@@ -53,8 +61,15 @@ const useQuestionStore = create<QuestionState>()(
           return state;
         }),
       responses: [],
+      removeQuery: (index)=>
+        set((state)=>{
+          const newQueries=state.queries.filter((_,i)=>i!==index);
+          return {queries:newQueries};
+        }),
       addQueries: (questions) =>
         set((state) => ({
+
+
           queries: [...state.queries, ...questions],
         })),
       addResponse: (response) =>
@@ -74,8 +89,9 @@ const useQuestionStore = create<QuestionState>()(
 );
 
 function clearData() {
-  useQuestionStore.setState({ queries: [], responses: [],fileUrls:[],apiResponse:[] }); // Reset Zustand store
+  useQuestionStore.setState({ queries: [], responses: [],fileUrls:[],apiResponse:[],askQuestion:false }); // Reset Zustand store
   localStorage.removeItem('questions-storage'); // Remove item from local storage
 }
+
 
 export { useQuestionStore, clearData };
