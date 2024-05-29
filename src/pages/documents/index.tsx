@@ -59,7 +59,7 @@ export default function Conversation() {
               chunks: responseData.Chunks,
               files: responseData.pdfNames.map(
                 (pdfName: string, index: number) => ({
-                  id: uuid(),
+                  id: pdfName,
                   filename: pdfName,
                   url: responseData.fileUrls[index],
                 })
@@ -143,25 +143,25 @@ export default function Conversation() {
     return (
       <div className="mt-1 flex gap-x-2 overflow-x-auto">
         {apiResponse[activeQuery] &&
-          apiResponse[activeQuery]?.chunks.map((chunk, i) => {
+          apiResponse[activeQuery]?.chunks.map((d, i) => {
             return (
               <div
                 onClick={() =>
                   handleCitationClick(
                     apiResponse[activeQuery]?.files?.[i]?.id || "",
-                    1,
+                    d.pageno,
                     {
                       documentId:
                         apiResponse[activeQuery]?.files?.[i]?.id || "",
-                      snippet: chunk || "",
-                      pageNumber: 1,
+                      snippet: d.chunk || "",
+                      pageNumber: d.pageno,
                       highlightColor: "yellow",
                     } as Citation
                   )
                 }
                 className="line-clamp-2 max-w-[200px] rounded-md border bg-gray-200 p-1 text-[12px] text-gray-700 hover:cursor-pointer hover:bg-slate-200"
               >
-                <p className="border-l-4 border-yellow-400 pl-1">{chunk}</p>
+                <p className="border-l-4 border-yellow-400 pl-1">{d.chunk}</p>
               </div>
             );
           })}
