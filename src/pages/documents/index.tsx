@@ -197,7 +197,7 @@ export default function Conversation() {
   const handleSaveResponse = async() => {
     if(queries[activeQuery] && editableResponse!=""){
       try{
-        const res=await backendClient.saveQna("/saveqna/",queries[activeQuery] || "",editableResponse);
+        const res=await backendClient.saveQna("/save-qna/",queries[activeQuery] || "",editableResponse);
         console.log("Res",res);
         setIsEditing(false)
       }catch(e){
