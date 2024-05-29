@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 const Layout = ({ children }: PropsWithChildren) => {
   return (
     <div className=" flex h-screen w-screen flex-col">
-      <div className="flex h-10 items-center justify-end px-2">
+      {/* <div className="flex h-10 items-center justify-end px-2">
         <SignedOut>
           <SignInButton mode="modal">
             <Button size="sm" className="h-[32px] rounded text-sm font-medium">
@@ -17,7 +17,7 @@ const Layout = ({ children }: PropsWithChildren) => {
         <SignedIn>
           <UserButton />
         </SignedIn>
-      </div>
+      </div> */}
       {children}
     </div>
   );

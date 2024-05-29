@@ -13,6 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import Container from "../ui/container";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Input } from "../ui/input";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+
 
 export const TitleAndDropdown = () => {
   const router = useRouter();
@@ -155,10 +157,10 @@ export const TitleAndDropdown = () => {
     }
   };
 
-  const handleSubmit=async()=>{
-    if(!inputQuestion){
+  const handleSubmit = async () => {
+    if (!inputQuestion) {
       setInputQuestion(true)
-    }else{
+    } else {
       router.push("/documents")
     }
   }
@@ -174,6 +176,18 @@ export const TitleAndDropdown = () => {
   };
   return (
     <div className="landing-page-gradient-1 font-lora relative flex h-max w-screen flex-col items-center ">
+      <div className="absolute right-5 top-5">
+        <SignedOut>
+          <SignInButton mode="modal">
+            <Button size="sm" className="h-[32px] rounded text-sm font-medium">
+              Sign in
+            </Button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+      </div>
       <div className="absolute left-8 top-8 w-[180px]">
         <img src="/speex.png" alt="Logo" />
       </div>
@@ -464,7 +478,7 @@ export const TitleAndDropdown = () => {
                 the questions and provide answers for each of them.
               </h1>
             </div>
-            <div className="mt-2 flex  w-full flex-col justify-start gap-y-6 p-4 ">
+            <div className="mt-2 flex  w-full flex-col justify-start gap-y-3 p-4 ">
               {isExcelUploaded ? (
                 <div className="mt-2 flex h-[100px] w-11/12 flex-col items-center justify-center px-4 text-green-500 ">
                   <BadgeCheck strokeWidth={1.25} />
@@ -472,9 +486,8 @@ export const TitleAndDropdown = () => {
                 </div>
               ) : (
                 <div
-                  className={` flex bg-${
-                    isDragActiveExcel ? "gray-200" : "[#f7f8f9]"
-                  } bg-gray-00 font-nunito text-gray-90 border-grey-400 h-[180px] w-full flex-col items-center justify-center rounded-[16px] border-[3px] border-dashed`}
+                  className={` flex bg-${isDragActiveExcel ? "gray-200" : "[#f7f8f9]"
+                    } bg-gray-00 font-nunito text-gray-90 border-grey-400 h-[180px] w-full flex-col items-center justify-center rounded-[16px] border-[3px] border-dashed`}
                   {...getRootPropsExcel()}
                 >
                   <Upload strokeWidth={1.25} size={36} className="mb-4" />
