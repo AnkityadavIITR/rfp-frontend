@@ -1,3 +1,4 @@
+"use client";
 import { useRouter } from "next/router";
 import React, { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
@@ -14,10 +15,13 @@ import Container from "../ui/container";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Input } from "../ui/input";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-
-
+import { useAuth } from "@clerk/nextjs";
+import { useToast } from "../ui/use-toast";
 export const TitleAndDropdown = () => {
   const router = useRouter();
+  const {toast}=useToast()
+  const { isLoaded, userId, sessionId, getToken } = useAuth();
+  
 
   const files = useFileStore((state) => state.files);
   const addFiles = useFileStore((state) => state.addFiles);
@@ -134,26 +138,35 @@ export const TitleAndDropdown = () => {
     }
   };
   const handleExcelSubmit = async (): Promise<any> => {
-    if (excels.length > 0 && !isExcelUploaded) {
-      try {
-        setLoading(true);
-        const excelResponse = await backendClient.postExcelFile(
-          "/uploadexcel/",
-          excels
-        );
-        const excelData = await excelResponse.json();
-        console.log("Excel response:", excelData);
-        addQuestions(excelData.details);
-        setIsExcelUploaded(true);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setLoading(false);
+    if(!userId){
+      toast({
+        variant: "destructive",
+        title: "Not authenticated",
+        description: "Signup or login first",
+      })
+    }else{
+      if (excels.length > 0 && !isExcelUploaded) {
+        try {
+          setLoading(true);
+          const excelResponse = await backendClient.postExcelFile(
+            "/uploadexcel/",
+            excels
+          );
+          const excelData = await excelResponse.json();
+          console.log("Excel response:", excelData);
+          addQuestions(excelData.details);
+          setIsExcelUploaded(true);
+        } catch (e) {
+          console.log(e);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        router.push("/documents").catch((e) => {
+          console.log(e);
+        });
       }
-    } else {
-      router.push("/documents").catch((e) => {
-        console.log(e);
-      });
+
     }
   };
 
@@ -161,7 +174,13 @@ export const TitleAndDropdown = () => {
     if (!inputQuestion) {
       setInputQuestion(true)
     } else {
-      router.push("/documents")
+      if(!userId){
+        toast({
+          variant: "destructive",
+          title: "Not authenticated",
+          description: "Signup or login first",
+        })
+      }else router.push("/documents")
     }
   }
 

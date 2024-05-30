@@ -1,3 +1,4 @@
+// "use client"
 import React, { useEffect, useState, memo } from "react";
 import { useRouter } from "next/router";
 import { PdfFocusProvider } from "~/context/pdf";
