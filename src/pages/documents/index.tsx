@@ -58,11 +58,11 @@ export default function Conversation() {
             addApiResponse({
               reponseMessage: response,
               chunks: responseData.Chunks,
-              files: responseData.pdfNames.map(
-                (pdfName: string, index: number) => ({
-                  id: pdfName,
-                  filename: pdfName,
-                  url: responseData.fileUrls[index],
+              files: responseData.pdf_data.map(
+                (data:any, index: number) => ({
+                  id: data.pdf_name,
+                  filename: data.pdf_name,
+                  url: data.url,
                 })
               ),
             });
