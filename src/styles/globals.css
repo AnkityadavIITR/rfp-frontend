@@ -24,12 +24,12 @@
 
 @layer components {
   .landing-page-gradient-1 {
-    background-color: hsla(0,0%,100%,1);
+    background-color: hsla(0, 0%, 100%, 1);
     background-image:
-      radial-gradient(at 21% 11%, hsla(240,51%,82%,0.53) 0px, transparent 50%),
-      radial-gradient(at 85% 0%, hsla(46,57%,78%,0.52) 0px, transparent 50%),
-      radial-gradient(at 91% 36%, hsla(221,100%,88%,0.68) 0px, transparent 50%),
-      radial-gradient(at 8% 40%, hsla(323,82%,92%,0.46) 0px, transparent 50%);
+      radial-gradient(at 21% 11%, rgba(255, 119, 144, 0.53) 0px, transparent 50%),
+      radial-gradient(at 85% 0%, rgba(255, 200, 200, 0.52) 0px, transparent 50%),
+      radial-gradient(at 91% 36%, rgba(255, 180, 180, 0.68) 0px, transparent 50%),
+      radial-gradient(at 8% 40%, rgba(255, 160, 160, 0.46) 0px, transparent 50%);
   }
 }
 
