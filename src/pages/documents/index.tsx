@@ -141,18 +141,18 @@ export default function Conversation() {
     };
 
     return (
-      <div className="mt-1 flex gap-x-2 overflow-x-auto">
+      <div className="mt-1 flex gap-x-2 overflow-scroll">
         {apiResponse[activeQuery] &&
           apiResponse[activeQuery]?.chunks.map((d, i) => {
             return (
               <div
                 onClick={() =>
                   handleCitationClick(
-                    apiResponse[activeQuery]?.files?.[i]?.id || "",
+                    d.pdfName || "",
                     d.pageno,
                     {
                       documentId:
-                        apiResponse[activeQuery]?.files?.[i]?.id || "",
+                        d.pdfName || "",
                       snippet: d.chunk || "",
                       pageNumber: d.pageno,
                       highlightColor: "yellow",

@@ -10,6 +10,7 @@ interface FileUrl {
 interface Chunk{
   chunk:string,
   fileUrl:string,
+  pdfName:string,
   pageno:number
 }
 interface Response{
