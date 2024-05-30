@@ -139,11 +139,7 @@ export const TitleAndDropdown = () => {
   };
   const handleExcelSubmit = async (): Promise<any> => {
     if(!userId){
-      toast({
-        variant: "destructive",
-        title: "Not authenticated",
-        description: "Signup or login first",
-      })
+      document.getElementById("auth")?.click();
     }else{
       if (excels.length > 0 && !isExcelUploaded) {
         try {
@@ -175,11 +171,7 @@ export const TitleAndDropdown = () => {
       setInputQuestion(true)
     } else {
       if(!userId){
-        toast({
-          variant: "destructive",
-          title: "Not authenticated",
-          description: "Signup or login first",
-        })
+        document.getElementById("auth")?.click();
       }else router.push("/documents")
     }
   }
@@ -198,7 +190,7 @@ export const TitleAndDropdown = () => {
       <div className="absolute right-5 top-5">
         <SignedOut>
           <SignInButton mode="modal">
-            <Button size="sm" className="h-[32px] rounded text-sm font-medium">
+            <Button id="auth" size="sm" className="h-[32px] rounded text-sm font-medium">
               Sign in
             </Button>
           </SignInButton>
