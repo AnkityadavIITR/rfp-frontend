@@ -7,10 +7,16 @@ interface FileUrl {
   filename: string;
   url: string;
 }
+interface Chunk{
+  chunk:string,
+  fileUrl:string,
+  pdfName:string,
+  pageno:number
+}
 interface Response{
   reponseMessage:string,
   files?:FileUrl[],
-  chunks:string[],
+  chunks:Chunk[],
 }
 
 
