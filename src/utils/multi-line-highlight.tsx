@@ -58,16 +58,26 @@ export const multiHighlight = (
   }
   console.log("lenserachstring",lenSearchString);
   
-  const firstWord = searchWords[1];
+  const firstWord = searchWords[0];
   if (!firstWord) {
     return;
   }
-  const searchData = generateDirectSearchData(
-    firstWord,
-    words,
-    lenSearchString
-  );
-  console.log("searchdata",searchData);
+  let searchData: SearchStrings[] = [];
+  for (let i = 0; i < 15; i++) {
+    const currentSearchWord = searchWords[i];
+    if (currentSearchWord) {
+      const currentSearchData = generateDirectSearchData(
+        currentSearchWord,
+        words,
+        lenSearchString
+      );
+      if (currentSearchData.length) {
+        searchData = currentSearchData;
+        break;
+      }
+    }
+  }
+  console.log("searchdata", searchData);
   
   const options = {
     includeScore: true,

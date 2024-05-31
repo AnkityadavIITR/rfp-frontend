@@ -142,7 +142,7 @@ export default function Conversation() {
     };
 
     return (
-      <div className="mt-1 flex gap-x-2 overflow-scroll">
+      <div className="mt-1 flex gap-x-2 overflow-auto">
         {apiResponse[activeQuery] &&
           apiResponse[activeQuery]?.chunks.map((d, i) => {
             return (
@@ -160,7 +160,7 @@ export default function Conversation() {
                     } as Citation
                   )
                 }
-                className="line-clamp-2 max-w-[200px] rounded-md border bg-gray-200 p-1 text-[12px] text-gray-700 hover:cursor-pointer hover:bg-slate-200"
+                className="line-clamp-2 w-[200px] rounded-md border bg-gray-200 p-1 text-[12px] text-gray-700 hover:cursor-pointer hover:bg-slate-200"
               >
                 <p className="border-l-4 border-yellow-400 pl-1">{d.chunk}</p>
               </div>
