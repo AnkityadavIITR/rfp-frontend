@@ -18,12 +18,17 @@ const AccordionComponent = () => {
     const responses = useQuestionStore((state) => state.responses);
     const setActiveQuery = useQuestionStore((state) => state.setActiveQuery);
     const activeQuery = useQuestionStore((state) => state.activeQuery);
+    const setResponseAtIndex=useQuestionStore((state)=>state.setResponseAtIndex);
 
-    const handleSaveResponse = async () => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editableResponse, setEditableResponse] = useState("");
+
+    const handleSaveResponse = async (i:number) => {
         if (queries[activeQuery] && editableResponse != "") {
             try {
                 const res = await backendClient.saveQna("/save-qna/", queries[activeQuery] || "", editableResponse);
                 console.log("Res", res);
+                setResponseAtIndex(i,editableResponse);
                 setIsEditing(false)
             } catch (e) {
                 console.log("error saving response", e)
@@ -31,8 +36,7 @@ const AccordionComponent = () => {
         }
     };
 
-    const [isEditing, setIsEditing] = useState(false);
-    const [editableResponse, setEditableResponse] = useState("");
+
     return (
         <Accordion
             type="single"
@@ -87,7 +91,7 @@ const AccordionComponent = () => {
                                             <Button
                                                 className="self-end"
                                                 onClick={() => {
-                                                    handleSaveResponse();
+                                                    handleSaveResponse(i);
                                                 }}
                                             >
                                                 save response

@@ -19,7 +19,7 @@ interface Response{
 }
 
 
-interface QuestionState {
+export interface QuestionState {
   queries: string[];
   activeQuery:number;
   apiResponse:Response[];
@@ -30,6 +30,7 @@ interface QuestionState {
   fileUrls:FileUrl[];
   addFileUrl: (files: FileUrl) => void;
   responses: string[];
+  setResponseAtIndex: (index: number, newResponse: string) => void;
   addQueries: (questions: string[]) => void;
   removeQuery: (index:number)=>void;
   addResponse: (response: string) => void;
@@ -66,6 +67,12 @@ const useQuestionStore = create<QuestionState>()(
           return state;
         }),
       responses: [],
+      setResponseAtIndex: (index, newResponse) =>
+        set((state) => {
+          const updatedResponses = [...state.responses];
+          updatedResponses[index] = newResponse;
+          return { responses: updatedResponses };
+        }),
       removeQuery: (index)=>
         set((state)=>{
           const newQueries=state.queries.filter((_,i)=>i!==index);
