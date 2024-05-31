@@ -57,9 +57,11 @@ const AccordionComponent = () => {
                             <>
                                 {!isEditing ? (
                                     <>
-                                        <ReactMarkdown className="leading-1">
-                                            {responses[i]}
-                                        </ReactMarkdown>
+                                        <div className="w-full border bg-blue-200 rounded-xl">
+                                            <ReactMarkdown className="p-2 overflow-scroll">
+                                                {responses[i]}
+                                            </ReactMarkdown>
+                                        </div>
                                         <div className="mt-2 flex w-full">
                                             <Button
                                                 className="self-end"
@@ -83,7 +85,7 @@ const AccordionComponent = () => {
                                                 className="h-32 w-full rounded border p-2"
                                             />
                                         </div>
-                                        <div className="mt-2 flex w-full">
+                                        <div className="mt-2 flex w-full gap-2">
                                             <Button
                                                 className="self-end"
                                                 onClick={() => {
@@ -91,6 +93,9 @@ const AccordionComponent = () => {
                                                 }}
                                             >
                                                 save response
+                                            </Button>
+                                            <Button onClick={()=>setIsEditing(false)}>
+                                                cancel
                                             </Button>
                                         </div>
                                     </>
