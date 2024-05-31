@@ -259,7 +259,10 @@ export const TitleAndDropdown = () => {
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
                   />
-                  <Button onClick={() => addQuestions([question])}>Add</Button>
+                  <Button onClick={() => {
+                    addQuestions([question])
+                    setQuestion("");
+                  }}>Add</Button>
                 </div>
               )}
               {inputQuestion && queries.length > 0 && (

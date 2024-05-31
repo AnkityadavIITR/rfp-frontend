@@ -63,7 +63,7 @@ export const multiHighlight = (
     return;
   }
   let searchData: SearchStrings[] = [];
-  for (let i = 0; i < 15; i++) {
+  for (let i = 0; i < 10; i++) {
     const currentSearchWord = searchWords[i];
     if (currentSearchWord) {
       const currentSearchData = generateDirectSearchData(
@@ -82,7 +82,7 @@ export const multiHighlight = (
   const options = {
     includeScore: true,
     threshold: 0.1, // Adjust this threshold according to your requirement.
-    minMatchCharLength: 10, // You might want to increase this for sentences.
+    minMatchCharLength: 20, // You might want to increase this for sentences.
     shouldSort: true,
     findAllMatches: true,
     includeMatches: true,
