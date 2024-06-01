@@ -1,7 +1,6 @@
 import type { Message } from "~/types/conversation";
 import type { BackendDocument } from "~/types/backend/document";
 import { SecDocument } from "~/types/document";
-import { fromBackendDocumentToFrontend } from "./utils/documents";
 import { promises } from "dns";
 
 interface CreateConversationPayload {

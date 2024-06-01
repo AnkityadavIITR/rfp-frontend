@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from "react";
+import React, { useEffect, useState} from "react";
 import { useRouter } from "next/router";
 import { PdfFocusProvider } from "~/context/pdf";
 import AccordionComponent from "~/components/document/Accordion";
@@ -9,6 +9,11 @@ import { backendClient } from "~/api/backend";
 import { useQuestionStore, clearData } from "~/utils/store/questionStore";
 import MobileWarningComponent from "~/components/document/MobileWarningComponent";
 
+interface ApiResponse {
+  message: string;
+  Chunks: any; 
+  pdf_data: { pdf_name: string; url: string }[];
+}
 
 export default function Conversation() {
   const router = useRouter();
@@ -31,12 +36,10 @@ export default function Conversation() {
               "/processquery/",
               question
             );
-            const responseData = await res.json();
+            const responseData: ApiResponse = await res.json();
             console.log("res", responseData);
-            //format the response before saving
             const response = formatMarkdown(responseData.message);
             addResponse(response);
-            //save the response
             addApiResponse({
               reponseMessage: response,
               chunks: responseData.Chunks,
