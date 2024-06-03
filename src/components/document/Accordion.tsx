@@ -19,7 +19,7 @@ const AccordionComponent = () => {
     const setActiveQuery = useQuestionStore((state) => state.setActiveQuery);
     const activeQuery = useQuestionStore((state) => state.activeQuery);
 
-    const handleSaveResponse = async () => {
+    const handleSaveResponse = async ():Promise<void> => {
         if (queries[activeQuery] && editableResponse != "") {
             try {
                 const res = await backendClient.saveQna("/save-qna/", queries[activeQuery] || "", editableResponse);
@@ -89,7 +89,11 @@ const AccordionComponent = () => {
                                             <Button
                                                 className="self-end"
                                                 onClick={() => {
-                                                    handleSaveResponse();
+                                                    handleSaveResponse().then(() => {
+                                                        console.log('Response saved successfully');
+                                                    }).catch((error) => {
+                                                        console.error('Failed to save response', error);
+                                                    });
                                                 }}
                                             >
                                                 save response

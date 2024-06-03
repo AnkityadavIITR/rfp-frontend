@@ -72,7 +72,11 @@ export default function Conversation() {
     };
 
     if (queries.length > responses.length) {
-      fetchData();
+      fetchData().then(() => {
+        console.log('Response saved successfully');
+    }).catch((error) => {
+        console.error('Failed to save response', error);
+    });
     }
   }, []);
 
@@ -84,11 +88,11 @@ export default function Conversation() {
 
   const formatMarkdown = (message: string): string => {
     const lines: string[] = message.split("\n");
-    let formattedMessage: string = "";
+    let formattedMessage = "";
 
-    let currentHeadingLevel: number = 2;
+    let currentHeadingLevel = 2;
     let currentNumber: number | null = null;
-    let currentSubheadingLetter: string = "a";
+    let currentSubheadingLetter= "a";
 
     lines.forEach((line: string) => {
       const numberMatch = line.match(/^\d+\./);
