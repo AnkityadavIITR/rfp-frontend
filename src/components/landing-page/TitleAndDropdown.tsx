@@ -157,7 +157,7 @@ export const TitleAndDropdown = () => {
               )}
               <div className="mx-auto flex">
                 <Button
-                  disabled={inputQuestion}
+                  disabled={inputQuestion && loading}
                   className={className()}
                   onClick={handleSubmit}
                 >

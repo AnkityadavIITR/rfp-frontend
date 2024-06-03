@@ -72,7 +72,11 @@ export default function Conversation() {
     };
 
     if (queries.length > responses.length) {
-      fetchData();
+      fetchData().then(() => {
+        console.log('Response saved successfully');
+    }).catch((error) => {
+        console.error('Failed to save response', error);
+    });
     }
   }, []);
 
