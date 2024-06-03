@@ -9,11 +9,25 @@ import { backendClient } from "~/api/backend";
 import { useQuestionStore, clearData } from "~/utils/store/questionStore";
 import MobileWarningComponent from "~/components/document/MobileWarningComponent";
 
-interface ApiResponse {
-  message: string;
-  Chunks: any; 
-  pdf_data: { pdf_name: string; url: string }[];
+
+export interface Chunk{
+  chunk:string,
+  fileUrl:string,
+  pageno:number,
+  pdfName:string,
 }
+
+export interface PdfData{
+  pdf_name:string,
+  url:string
+}
+
+export interface ApiResponse {
+  message: string;
+  Chunks: Chunk[]; 
+  pdf_data: PdfData[];
+}
+
 
 export default function Conversation() {
   const router = useRouter();
@@ -32,26 +46,24 @@ export default function Conversation() {
       try {
         await Promise.all(
           queries.map(async (question, index) => {
-            const res = await backendClient.fetchQuery(
+            const responseData = await backendClient.fetchQuery(
               "/processquery/",
               question
             );
-            const responseData: ApiResponse = await res.json();
-            console.log("res", responseData);
-            const response = formatMarkdown(responseData.message);
-            addResponse(response);
-            addApiResponse({
-              reponseMessage: response,
-              chunks: responseData.Chunks,
-              files: responseData.pdf_data.map(
-                (data:any, index: number) => ({
+            if (responseData) {
+              const response = formatMarkdown(responseData.message);
+              addResponse(response);
+              addApiResponse({
+                reponseMessage: response,
+                chunks: responseData.Chunks,
+                files: responseData.pdf_data.map((data: PdfData) => ({
                   id: data.pdf_name,
                   filename: data.pdf_name,
                   url: data.url,
-                })
-              ),
-            });
-            setLoading(false);
+                })),
+              });
+              setLoading(false);
+            }
           })
         );
       } catch (e) {
@@ -78,7 +90,7 @@ export default function Conversation() {
     let currentNumber: number | null = null;
     let currentSubheadingLetter: string = "a";
 
-    lines.forEach((line: string, index: number) => {
+    lines.forEach((line: string) => {
       const numberMatch = line.match(/^\d+\./);
       if (numberMatch && numberMatch[0]) {
         const number: string | undefined = numberMatch[0].match(/^\d+/)?.[0];

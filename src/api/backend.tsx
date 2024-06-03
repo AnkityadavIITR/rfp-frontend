@@ -1,27 +1,34 @@
 import type { Message } from "~/types/conversation";
 import type { BackendDocument } from "~/types/backend/document";
-import { SecDocument } from "~/types/document";
-import { promises } from "dns";
-
-interface CreateConversationPayload {
-  id: string;
-}
+import type { SecDocument } from "~/types/document";
+import type { PdfData, Chunk } from "~/pages/documents";
 
 const backendUrl: string = process.env.NEXT_PUBLIC_BACKEND_URL || '';
-interface GetConversationPayload {
-  id: string;
-  messages: Message[];
-  documents: BackendDocument[];
+
+export interface SaveQnaResponse {
+  message: string;
 }
 
-interface GetConversationReturnType {
-  messages: Message[];
-  documents: SecDocument[];
+export interface ProcessQueryResponse {
+  id: string;
+  message: string;
+  pdf_data: PdfData[];
+  Chunks: Chunk[];
+  page: number[];
 }
-type OnDataCallback = (chunk: string) => void;
+
+export interface UploadExcelResponse {
+  message: string;
+  details: string[];
+}
+
+export interface UploadPdfResponse {
+  message: string;
+  details: string[];
+}
 
 class BackendClient {
-  private async get(endpoint: string) {
+  private async get(endpoint: string): Promise<Response> {
     const url = backendUrl + endpoint;
     const res = await fetch(url);
 
@@ -31,7 +38,7 @@ class BackendClient {
     return res;
   }
 
-  private async post(endpoint: string, body?: any) {
+  private async post(endpoint: string, body?: unknown): Promise<Response> {
     const url = backendUrl + endpoint;
     const res = await fetch(url, {
       method: "POST",
@@ -45,112 +52,102 @@ class BackendClient {
     return res;
   }
 
-  public async postExcelFile(endpoint: string, files: File[]): Promise<Response> {
+  public async postExcelFile(endpoint: string, files: File[]): Promise<UploadExcelResponse | undefined> {
     const url = backendUrl + endpoint;
-    console.log("excels",files);
-    
+    console.log("excels", files);
+
     const formData = new FormData();
     files.forEach((file) => {
       formData.append("file", file);
-    })
-
-    const res = await fetch(url, {
-      method: "POST",
-      body: formData,
     });
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
 
-    return res;
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      return res.json() as Promise<UploadExcelResponse>;
+    } catch (e) {
+      console.log("got error on excel upload", e);
+      return undefined;
+    }
   }
 
-  public async postPdfFile(endpoint: string, files: File[]): Promise<Response> {
+  public async postPdfFile(endpoint: string, files: File[]): Promise<UploadPdfResponse | undefined> {
     const url = backendUrl + endpoint;
     const formData = new FormData();
-    console.log(files);
-    
     files.forEach((file) => {
       formData.append("files", file);
-    })
-
-    const res = await fetch(url, {
-      method: "POST",
-      body: formData,
     });
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
 
-    return res;
-  }
-
-  public async saveQna(endpoint:string,query:string,newAns:string):Promise<any>{
-    const url = backendUrl + endpoint;
-    const qna={
-      question:query,
-      answer:newAns
-    }
-    try{
-      const response=await fetch(url,{
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify(qna)
-      })
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
       }
-      return response;
-    }catch(e){
-      console.log("error saving qna",e);
+
+      return res.json() as Promise<UploadPdfResponse>;
+    } catch (e) {
+      console.log("error on pdf upload", e);
+      return undefined;
     }
   }
 
-  public async fetchQuery(endpoint: string, query: string): Promise<Response> {
+  public async saveQna(endpoint: string, query: string, newAns: string): Promise<SaveQnaResponse | undefined> {
+    const url = backendUrl + endpoint;
+    const qna = {
+      question: query,
+      answer: newAns,
+    };
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(qna),
+      });
+      if (!response.ok) {
+        console.log("error saving qna");
+        return undefined;
+      }
+      return response.json() as Promise<SaveQnaResponse>;
+    } catch (e) {
+      console.log("error saving qna", e);
+      return undefined;
+    }
+  }
+
+  public async fetchQuery(endpoint: string, query: string): Promise<ProcessQueryResponse | undefined> {
     const url = backendUrl + endpoint;
     const requestData = {
-      query: query
+      query: query,
     };
     try {
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestData)
+        body: JSON.stringify(requestData),
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
-      return response;
-
-    } catch (error) {
-      throw new Error(`Error fetching query: ${error}`);
+      return response.json() as Promise<ProcessQueryResponse>;
+    } catch (e) {
+      console.log("error fetching query", e);
+      return undefined;
     }
   }
-
-  public async getFileUrl(endpoint:string,fileName:string):Promise<any>{
-    const [file] = fileName.split('.pdf');
-    const url = backendUrl + endpoint+file+'/';
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
-      return response;
-
-    } catch (error) {
-      throw new Error(`Error fetching query: ${error}`);
-    }
-  }
-
-
 }
 
 export const backendClient = new BackendClient();

@@ -70,7 +70,7 @@ const ExcelInput = () => {
         },
       });
 
-      const handleExcelSubmit = async (): Promise<any> => {
+      const handleExcelSubmit = async ()=> {
         if (!userId) {
           document.getElementById("auth")?.click();
         } else {
@@ -81,10 +81,11 @@ const ExcelInput = () => {
                 "/uploadexcel/",
                 excels
               );
-              const excelData = await excelResponse.json();
-              console.log("Excel response:", excelData);
-              addQuestions(excelData.details);
-              setIsExcelUploaded(true);
+              if(excelResponse){
+                console.log("Excel response:", excelResponse);
+                addQuestions(excelResponse.details);
+                setIsExcelUploaded(true);
+              }
             } catch (e) {
               console.log(e);
             } finally {

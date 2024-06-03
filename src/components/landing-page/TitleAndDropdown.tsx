@@ -2,7 +2,7 @@
 import { useRouter } from "next/router";
 import React, { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, Trash2, BadgeCheck, File, Send } from "lucide-react";
+import { Upload, Trash2, BadgeCheck, Send } from "lucide-react";
 import { useFileStore } from "~/utils/store/fileStore";
 import { backendClient } from "~/api/backend";
 import { useQuestionStore } from "~/utils/store/questionStore";
@@ -12,12 +12,12 @@ import Container from "../ui/container";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Input } from "../ui/input";
 import { useAuth } from "@clerk/nextjs";
-import { useToast } from "../ui/use-toast";
 import Auth from "./auth";
 import ExcelInput from "./ExcelInput";
+import Image from "next/image";
+
 export const TitleAndDropdown = () => {
   const router = useRouter();
-  const { toast } = useToast();
   const { userId } = useAuth();
 
   const files = useFileStore((state) => state.files);
@@ -65,7 +65,7 @@ export const TitleAndDropdown = () => {
   });
 
 
-  const handlePdfSubmit = async (): Promise<any> => {
+  const handlePdfSubmit = async ()=> {
     if (files.length > 0 && !isPdfUploaded) {
       try {
         setLoading(true);
@@ -73,8 +73,8 @@ export const TitleAndDropdown = () => {
           "/upload-files/",
           files
         );
-        const pdfData = await pdfResponse.json();
-        console.log("PDF response:", pdfData);
+        
+        console.log("PDF response:", pdfResponse);
         setIsPdfUploaded(true);
       } catch (e) {
         console.log(e);
@@ -87,7 +87,7 @@ export const TitleAndDropdown = () => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit =() => {
     if (!inputQuestion) {
       setInputQuestion(true);
     } else {
@@ -110,7 +110,7 @@ export const TitleAndDropdown = () => {
     <div className="landing-page-gradient-1 font-lora relative flex h-max w-screen flex-col items-center ">
       <Auth />
       <div className="absolute left-8 top-8 w-[180px]">
-        <img src="/speex.png" alt="Logo" />
+        <Image src="/speex.png" alt="Logo" width={180} height={20} />
       </div>
 
       <Container>
@@ -161,7 +161,7 @@ export const TitleAndDropdown = () => {
           <div className="mt-5 flex min-h-[320px] w-full flex-col items-center justify-center rounded-[16px] border-2 bg-white shadow-xl ">
             <div className="mx-4 mb-2 mt-4 self-start">
               <h1 className="text-center text-[18px] font-medium">
-                In Q&A, you can ask me questions, and I'll do my best to provide
+                In Q&apos;A, you can ask me questions, and I'll do my best to provide
                 helpful answers.
               </h1>
             </div>
@@ -288,7 +288,7 @@ export const TitleAndDropdown = () => {
                         ) : (
                           <>
                             <p className="text-[14px] text-gray-700 hover:cursor-default">
-                              Drag & drop files(s) to upload{" "}
+                              Drag &apos; drop files(s) to upload{" "}
                             </p>
                             <p className="cursor-pointer font-semibold underline">
                               or browse
@@ -304,7 +304,7 @@ export const TitleAndDropdown = () => {
                   {files.length > 0 &&
                     files.map((file, index) => {
                       return (
-                        <div className="flex">
+                        <div className="flex" key={index}>
                           <div>
                             <svg
                               id="Layer_1"

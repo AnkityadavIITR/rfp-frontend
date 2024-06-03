@@ -24,6 +24,7 @@ export const ChunkDisplay = () => {
           apiResponse[activeQuery]?.chunks.map((d, i) => {
             return (
               <div
+              key={i}
                 onClick={() =>
                   handleCitationClick(
                     d.pdfName || "",
