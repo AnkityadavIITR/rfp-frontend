@@ -19,7 +19,7 @@ const AccordionComponent = () => {
     const setActiveQuery = useQuestionStore((state) => state.setActiveQuery);
     const activeQuery = useQuestionStore((state) => state.activeQuery);
 
-    const handleSaveResponse = async () => {
+    const handleSaveResponse = async ():Promise<void> => {
         if (queries[activeQuery] && editableResponse != "") {
             try {
                 const res = await backendClient.saveQna("/save-qna/", queries[activeQuery] || "", editableResponse);

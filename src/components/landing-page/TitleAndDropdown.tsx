@@ -8,15 +8,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import Container from "../ui/container";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Input } from "../ui/input";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth,useUser, useSession  } from "@clerk/nextjs";
 import Auth from "./auth";
 import ExcelInput from "./ExcelInput";
 import Image from "next/image";
 import PdfInput from "./PdfInput";
+import { checkUserRole } from "~/utils/userUtils";
 
 export const TitleAndDropdown = () => {
   const router = useRouter();
   const { userId } = useAuth();
+  const { session } = useSession();
+  // console.log("session",session);
+  const userRole = checkUserRole(session);
+  // console.log("userrole",userRole);  
 
   const queries = useQuestionStore((state) => state.queries);
   const addQuestions = useQuestionStore((state) => state.addQueries);
@@ -92,7 +97,7 @@ export const TitleAndDropdown = () => {
           <TabsTrigger value="excel" className="w-1/2">
             Queries
           </TabsTrigger>
-          {userId && userId === process.env.NEXT_PUBLIC_ADMIN_CLERK_USERID && (
+          {userId && userRole === "org:admin" && (
             <TabsTrigger value="pdf" className="w-1/2">
               Docs
             </TabsTrigger>
@@ -165,7 +170,7 @@ export const TitleAndDropdown = () => {
             </div>
           </div>
         </TabsContent>
-        {userId && userId === process.env.NEXT_PUBLIC_ADMIN_CLERK_USERID && (
+        {userId && userRole === "org:admin" && (
           <TabsContent value="pdf">
             <PdfInput setValue={setValue}/>
           </TabsContent>
