@@ -8,6 +8,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useRouter } from 'next/router';
 import { useQuestionStore } from '~/utils/store/questionStore';
 import { Button } from '../ui/button';
+import Image from 'next/image';
 
 
 const ExcelInput = () => {
@@ -73,6 +74,7 @@ const ExcelInput = () => {
       const handleExcelSubmit = async ()=> {
         if (!userId) {
           document.getElementById("auth")?.click();
+          return undefined
         } else {
           if (excels.length > 0 && !isExcelUploaded) {
             try {
@@ -147,9 +149,9 @@ const ExcelInput = () => {
         {excels.length > 0 &&
           excels.map((excel, index) => {
             return (
-              <div className="flex">
+              <div className="flex" key={index}>
                 <div className="w-[20px]">
-                  <img src="/excel.svg" alt="Excel SVG" />
+                  <Image src="/excel.svg" alt="Excel SVG" width={20} height={20} />
                 </div>
                 <div className="ml-3 mr-[10px] line-clamp-1 w-[300px]">
                   <p className="text-[14px] ">p{excel.name}</p>
