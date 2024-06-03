@@ -20,6 +20,7 @@ export const TitleAndDropdown = () => {
   const { userId } = useAuth();
   const { session } = useSession();
   // console.log("session",session);
+  
   const userRole = checkUserRole(session);
   // console.log("userrole",userRole);  
 

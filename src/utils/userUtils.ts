@@ -1,4 +1,16 @@
-function checkUserRole(session:any) {
+interface OrganizationMembership {
+    role: string;
+  }
+  
+  interface User {
+    organizationMemberships: OrganizationMembership[];
+  }
+  
+  interface Session {
+    user: User;
+  }
+  
+  function checkUserRole(session: Session | null | undefined): string | null {
     if (
       !session ||
       !session.user ||
@@ -21,3 +33,4 @@ function checkUserRole(session:any) {
   }
   
   export { checkUserRole };
+  
