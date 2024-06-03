@@ -89,7 +89,11 @@ const AccordionComponent = () => {
                                             <Button
                                                 className="self-end"
                                                 onClick={() => {
-                                                    handleSaveResponse();
+                                                    handleSaveResponse().then(() => {
+                                                        console.log('Response saved successfully');
+                                                    }).catch((error) => {
+                                                        console.error('Failed to save response', error);
+                                                    });
                                                 }}
                                             >
                                                 save response

@@ -176,7 +176,13 @@ const ExcelInput = () => {
               ? "min-w-[80px] text-[14px]  "
               : "bg-gray-400 text-[14px] hover:bg-gray-400"
           }
-          onClick={handleExcelSubmit}
+          onClick={()=>{
+            handleExcelSubmit().then(() => {
+              console.log('Response saved successfully');
+          }).catch((error) => {
+              console.error('Failed to save response', error);
+          });
+          }}
         >
           {loading ? (
             <div className="flex items-center justify-center">

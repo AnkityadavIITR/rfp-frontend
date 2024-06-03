@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/router";
-import React, { useState, useCallback } from "react";
+import React, { useState} from "react";
 import {Trash2} from "lucide-react";
 import { useQuestionStore } from "~/utils/store/questionStore";
 import { Button } from "../ui/button";
@@ -34,15 +34,17 @@ export const TitleAndDropdown = () => {
   const [inputQuestion, setInputQuestion] = useState<boolean>(false);
   const [question, setQuestion] = useState<string>("");
 
-  const handleSubmit =() => {
+  const handleSubmit = () => {
     if (!inputQuestion) {
-      setInputQuestion(true);
+        setInputQuestion(true);
     } else {
-      if (!userId) {
-        document.getElementById("auth")?.click();
-      } else router.push("/documents");
+        if (!userId) {
+            document.getElementById("auth")?.click();
+        } else {
+            void router.push("/documents");
+        }
     }
-  };
+};
 
   const className = () => {
     if (inputQuestion) {
@@ -78,7 +80,7 @@ export const TitleAndDropdown = () => {
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <div className="text-center text-[22px]">
-            Hello! I'm Pedro, your assistant for cybersecurity, GDPR, and more.
+            Hello! I&pos;m Pedro, your assistant for cybersecurity, GDPR, and more.
             How can I help you today?
           </div>
         </div>
@@ -108,7 +110,7 @@ export const TitleAndDropdown = () => {
           <div className="mt-5 flex min-h-[320px] w-full flex-col items-center justify-center rounded-[16px] border-2 bg-white shadow-xl ">
             <div className="mx-4 mb-2 mt-4 self-start">
               <h1 className="text-center text-[18px] font-medium">
-                In Q&apos;A, you can ask me questions, and I'll do my best to provide
+                In Q&apos;A, you can ask me questions, and I&apso;ll do my best to provide
                 helpful answers.
               </h1>
             </div>
