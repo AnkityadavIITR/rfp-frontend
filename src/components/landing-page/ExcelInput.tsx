@@ -154,7 +154,7 @@ const ExcelInput = () => {
                   <Image src="/excel.svg" alt="Excel SVG" width={20} height={20} />
                 </div>
                 <div className="ml-3 mr-[10px] line-clamp-1 w-[300px]">
-                  <p className="text-[14px] ">p{excel.name}</p>
+                  <p className="text-[14px] ">{excel.name}</p>
                 </div>
                 <div className="">
                   <Trash2
