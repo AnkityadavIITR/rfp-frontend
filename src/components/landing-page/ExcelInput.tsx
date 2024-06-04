@@ -47,7 +47,7 @@ const ExcelInput = () => {
     
           if (excelFile.length > 0) {
             addExcels(excelFile);
-            console.log("files", excelFile);
+            // console.log("files", excelFile);
           } else {
             alert("Please select only Excel or CSV files.");
           }
@@ -84,7 +84,7 @@ const ExcelInput = () => {
                 excels
               );
               if(excelResponse){
-                console.log("Excel response:", excelResponse);
+                // console.log("Excel response:", excelResponse);
                 addQuestions(excelResponse.details);
                 setIsExcelUploaded(true);
               }
